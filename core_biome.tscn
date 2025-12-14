@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://dl21mnm0cvl2d"]
+
+[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="1_r5i6q"]
+
+[sub_resource type="TileSet" id="TileSet_r5i6q"]
+
+[node name="CoreBiome" type="Node2D"]
+
+[node name="DefaultTileMap" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_r5i6q")
+
+[node name="Player" parent="." instance=ExtResource("1_r5i6q")]
