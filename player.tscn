@@ -1,6 +1,6 @@
 [gd_scene load_steps=34 format=3 uid="uid://ddxm04kxuvot0"]
 
-[ext_resource type="Texture2D" uid="uid://cx6mah472cpk0" path="res://Assets/Player/player_spritesheet.png" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://cx6mah472cpk0" path="res://assets/player/player_spritesheet.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://fu4jur1yst52" path="res://player.gd" id="1_onrkg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
@@ -132,7 +132,7 @@ tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05),
+"times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [0, 1]
@@ -163,7 +163,7 @@ tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05),
+"times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [6, 7]
@@ -206,7 +206,7 @@ tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05),
+"times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [6, 7]
@@ -249,7 +249,7 @@ tracks/0/path = NodePath("Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.05),
+"times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [3, 4]
@@ -452,14 +452,14 @@ blend_point_3/pos = Vector2(0, -1)
 blend_mode = 1
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ivps1"]
-states/End/position = Vector2(810, 100)
+states/End/position = Vector2(651, 100)
 states/Idle/node = SubResource("AnimationNodeBlendSpace2D_2hs0m")
 states/Idle/position = Vector2(314, 100)
-states/Start/position = Vector2(162, 100)
+states/Start/position = Vector2(166, 100)
 states/Turn/node = SubResource("AnimationNodeBlendSpace2D_bwjto")
-states/Turn/position = Vector2(653, 100)
+states/Turn/position = Vector2(485, 48)
 states/Walk/node = SubResource("AnimationNodeBlendSpace2D_nvl01")
-states/Walk/position = Vector2(479, 100)
+states/Walk/position = Vector2(485, 151)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_onrkg")
@@ -489,4 +489,10 @@ tree_root = SubResource("AnimationNodeStateMachine_ivps1")
 anim_player = NodePath("../AnimationPlayer")
 parameters/Idle/blend_position = Vector2(-1.0095694, -0.01098907)
 parameters/Turn/blend_position = Vector2(0, 0)
-parameters/Walk/blend_position = Vector2(-0.9984051, 0.004484296)
+parameters/Walk/blend_position = Vector2(-0.6236045, -0.5949367)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+position = Vector2(8, 8)
+target_position = Vector2(0, 16)
