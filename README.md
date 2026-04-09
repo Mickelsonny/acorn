@@ -1,5 +1,2 @@
-A.C.O.R.N.
-
-Agent-based | Co-evolution of | Organisms across | Reactive | Natural environments
-
-Description: TBD
+# ACORN
+A natural selection agent-based model with differing biomes, species, habitats, etc. portrayed through pixel art.

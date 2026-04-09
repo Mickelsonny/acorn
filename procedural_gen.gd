@@ -1,45 +1,59 @@
 extends Node2D
 
-@export var noise_height_texture : NoiseTexture2D
+@export var width = 600
+@export var height = 200
+@onready var tileMapLayer = $TileMapLayer
 
-var noise : Noise
-var width : int = 75
-var height : int = 75
+var temperature = {}
+var moisture = {}
+var altitude = {}
+var biome = {}
+var fastNoiseLite = FastNoiseLite.new()
 
-@onready var tile_map_layer = $TestGroundLayer
-
-var TERRAIN_OCEAN = 0
-var TERRAIN_GRASS = 1
-var TERRAIN_SAND = 2
-var TERRAIN_MESA = 3
-var TERRAIN_SNOW = 4
-
-func _ready() -> void:
-	noise = noise_height_texture.noise
-	generate_world()
-
-func generate_world():
-	var half_width := width / 2.0
-	var half_height := height / 2.0
-
-	for x in range(-half_width, half_width):
-		for y in range(-half_height, half_height):
-			tile_map_layer.set_cells_terrain_connect([Vector2i(x, y)], 0, TERRAIN_OCEAN, false)
+func generate_map(period, octave):
+	fastNoiseLite.seed = randi()
+	fastNoiseLite.frequency = 1.0 / period
+	fastNoiseLite.fractal_octaves = octave
 	
-	for x in range(-half_width, half_width):
-		for y in range(-half_height, half_height):
-			var noise_val : float = noise.get_noise_2d(x, y)
+	var gridName = {}
+	for x in width:
+		for y in height:
+			# Returns the value of the noise at a specific position (in this case, x and y) multiplied by 2
+			var rand: float = 2 * (abs(fastNoiseLite.get_noise_2d(x, y)))
+			# Vector2 of the position as the key
+			gridName[Vector2(x, y)] = rand
+	
+	return gridName
 
-			if noise_val >= -0.4:
-				var terrain_id = get_terrain_from_noise(noise_val)
-				tile_map_layer.set_cells_terrain_connect([Vector2i(x, y)], 0, terrain_id, false)
+func set_tile(width, height):
+	for x in width:
+		for y in height:
+			# The altitude, temperature, and moisture at a certain position
+			var pos = Vector2(x, y)
+			var alt = altitude[pos]
+			var temp = temperature[pos]
+			var moist = moisture[pos]
+			
+			# Test
+			if alt < 0.2:
+				tileMapLayer.set_cell(pos, 0, Vector2(0, 12))
+			else:
+				tileMapLayer.set_cell(pos, 0, Vector2(0, 0))
 
-func get_terrain_from_noise(noise_val: float) -> int:
-	if noise_val < -0.15:
-		return TERRAIN_SAND
-	elif noise_val < 0.1:
-		return TERRAIN_GRASS
-	elif noise_val < 0.35:
-		return TERRAIN_MESA
-	else:
-		return TERRAIN_SNOW
+# Helper comparison function for biome deciding
+func in_between(val, start, end):
+	if start <= val and val < end:
+		return true
+
+# Function to better visualize the procedurally generated world when pressing space bar/enter
+func _input(event):
+	if event.is_action_pressed("ui_accept"):
+		get_tree().reload_current_scene()
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	temperature = generate_map(300, 5)
+	moisture = generate_map(300, 5)
+	altitude = generate_map(150, 5)
+	
+	set_tile(width, height)

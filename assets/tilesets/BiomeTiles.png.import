@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bvc7ob20ej6tq"
-path="res://.godot/imported/MesaTiles.png-acd0ef9a38b0c83071652fbfbe06aad7.ctex"
+uid="uid://ekjn1nxfmi1m"
+path="res://.godot/imported/BiomeTiles.png-3e16f6c90afc8fc16447120591b710c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/MesaTiles.png"
-dest_files=["res://.godot/imported/MesaTiles.png-acd0ef9a38b0c83071652fbfbe06aad7.ctex"]
+source_file="res://assets/tilesets/BiomeTiles.png"
+dest_files=["res://.godot/imported/BiomeTiles.png-3e16f6c90afc8fc16447120591b710c0.ctex"]
 
 [params]
 

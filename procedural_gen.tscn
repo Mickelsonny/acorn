@@ -1,25 +1,157 @@
 [gd_scene load_steps=6 format=3 uid="uid://jastkk7h3umq"]
 
 [ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
-[ext_resource type="TileSet" uid="uid://dbece8n8ff04k" path="res://assets/terrain/terrain_sets.tres" id="2_41wxt"]
+[ext_resource type="Texture2D" uid="uid://ekjn1nxfmi1m" path="res://assets/tilesets/BiomeTiles.png" id="3_14j13"]
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_tjmt1"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_k5wtf"]
+texture = ExtResource("3_14j13")
+26:0/0 = 0
+27:0/0 = 0
+25:1/0 = 0
+27:1/0 = 0
+25:2/0 = 0
+26:2/0 = 0
+27:2/0 = 0
+25:3/0 = 0
+29:3/0 = 0
+25:4/0 = 0
+29:4/0 = 0
+30:4/0 = 0
+25:5/0 = 0
+26:5/0 = 0
+27:5/0 = 0
+29:5/0 = 0
+30:5/0 = 0
+25:6/0 = 0
+26:6/0 = 0
+27:6/0 = 0
+29:6/0 = 0
+25:7/0 = 0
+26:7/0 = 0
+27:7/0 = 0
+29:7/0 = 0
+29:8/0 = 0
+29:9/0 = 0
+29:10/0 = 0
+25:0/0 = 0
+28:0/0 = 0
+29:0/0 = 0
+28:1/0 = 0
+29:1/0 = 0
+28:2/0 = 0
+29:2/0 = 0
+26:3/0 = 0
+27:3/0 = 0
+28:3/0 = 0
+27:4/0 = 0
+28:4/0 = 0
+28:5/0 = 0
+28:6/0 = 0
+28:7/0 = 0
+25:8/0 = 0
+26:8/0 = 0
+27:8/0 = 0
+28:8/0 = 0
+25:9/0 = 0
+26:9/0 = 0
+27:9/0 = 0
+28:9/0 = 0
+25:10/0 = 0
+26:10/0 = 0
+27:10/0 = 0
+28:10/0 = 0
+25:11/0 = 0
+26:11/0 = 0
+27:11/0 = 0
+28:11/0 = 0
+29:11/0 = 0
+13:0/0 = 0
+14:0/0 = 0
+15:0/0 = 0
+13:1/0 = 0
+14:1/0 = 0
+15:1/0 = 0
+12:3/0 = 0
+15:3/0 = 0
+12:4/0 = 0
+15:4/0 = 0
+15:6/0 = 0
+15:7/0 = 0
+12:9/0 = 0
+15:9/0 = 0
+12:10/0 = 0
+15:10/0 = 0
+0:0/size_in_atlas = Vector2i(3, 3)
+0:0/0 = 0
+3:0/size_in_atlas = Vector2i(3, 3)
+3:0/0 = 0
+6:0/size_in_atlas = Vector2i(3, 3)
+6:0/0 = 0
+9:0/size_in_atlas = Vector2i(3, 3)
+9:0/0 = 0
+9:3/size_in_atlas = Vector2i(3, 3)
+9:3/0 = 0
+6:3/size_in_atlas = Vector2i(3, 3)
+6:3/0 = 0
+3:3/size_in_atlas = Vector2i(3, 3)
+3:3/0 = 0
+0:3/size_in_atlas = Vector2i(3, 3)
+0:3/0 = 0
+0:6/size_in_atlas = Vector2i(3, 3)
+0:6/0 = 0
+3:6/size_in_atlas = Vector2i(3, 3)
+3:6/0 = 0
+6:6/size_in_atlas = Vector2i(3, 3)
+6:6/0 = 0
+9:6/size_in_atlas = Vector2i(3, 3)
+9:6/0 = 0
+9:9/size_in_atlas = Vector2i(3, 3)
+9:9/0 = 0
+6:9/size_in_atlas = Vector2i(3, 3)
+6:9/0 = 0
+3:9/size_in_atlas = Vector2i(3, 3)
+3:9/0 = 0
+0:9/size_in_atlas = Vector2i(3, 3)
+0:9/0 = 0
+0:12/size_in_atlas = Vector2i(3, 3)
+0:12/0 = 0
+3:12/size_in_atlas = Vector2i(3, 3)
+3:12/0 = 0
+6:12/size_in_atlas = Vector2i(3, 3)
+6:12/0 = 0
+9:12/size_in_atlas = Vector2i(3, 3)
+9:12/0 = 0
+12:12/size_in_atlas = Vector2i(3, 3)
+12:12/0 = 0
+12:0/size_in_atlas = Vector2i(1, 2)
+12:0/0 = 0
+13:3/size_in_atlas = Vector2i(2, 2)
+13:3/0 = 0
+13:6/size_in_atlas = Vector2i(2, 2)
+13:6/0 = 0
+12:6/size_in_atlas = Vector2i(1, 2)
+12:6/0 = 0
+13:9/size_in_atlas = Vector2i(2, 2)
+13:9/0 = 0
+16:6/size_in_atlas = Vector2i(3, 3)
+16:6/0 = 0
+16:9/size_in_atlas = Vector2i(3, 3)
+16:9/0 = 0
+16:3/size_in_atlas = Vector2i(3, 3)
+16:3/0 = 0
+16:0/size_in_atlas = Vector2i(3, 3)
+16:0/0 = 0
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tjmt1"]
-noise = SubResource("FastNoiseLite_tjmt1")
+[sub_resource type="TileSet" id="TileSet_ovnor"]
+sources/0 = SubResource("TileSetAtlasSource_k5wtf")
 
 [node name="ProceduralGen" type="Node2D"]
 script = ExtResource("1_tjmt1")
-noise_height_texture = SubResource("NoiseTexture2D_tjmt1")
-
-[node name="TestGroundLayer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("2_41wxt")
 
 [node name="Player" parent="." instance=ExtResource("3_41wxt")]
 y_sort_enabled = true
 
-[node name="TerrainTileMap" type="Node2D" parent="."]
-
-[node name="Ground" type="TileMapLayer" parent="TerrainTileMap"]
-tile_set = ExtResource("2_41wxt")
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = SubResource("TileSet_ovnor")
