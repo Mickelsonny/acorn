@@ -1,116 +1,47 @@
+class_name Spirot
 extends CharacterBody2D
 
-@export var walk_speed = 4.0
-const TILE_SIZE = 16
+@export var speed: float = 64.0
+@export var sprint_multiplier: float = 1.5
+@export var animation_tree: AnimationTree 
+@export var animation_player: AnimationPlayer
 
-@onready var anim_tree = $AnimationTree
-@onready var anim_state = anim_tree.get("parameters/playback")
-@onready var ray = $RayCast2D
-
-enum PlayerState { IDLE, TURNING, WALKING }
-enum FacingDirection { LEFT, RIGHT, UP, DOWN}
-
-var player_state = PlayerState.IDLE
-var facing_direction = FacingDirection.DOWN
-
-var initial_position = Vector2(0, 0)
-var input_direction = Vector2(0, 0)
-var is_moving = false
-var percent_moved_to_next_tile = 0.0
-
-var direction_keys: Array = []
+var input: Vector2
+var playback: AnimationNodeStateMachinePlayback
+var move_multiplier: float = 1.0
 
 func _ready():
-	anim_tree.active = true
-	initial_position = position
+	playback = animation_tree["parameters/playback"]
+
+func _physics_process(_delta: float) -> void:
+	# Respective -x, +x, -y, +y
+	input = Input.get_vector("left", "right", "up", "down")
 	
-func _physics_process(delta: float) -> void:
-	direction_storage()
+	# Check if sprinting (holding down shift) and avoid speeding up idle animation while standing still
+	var sprinting := Input.is_action_pressed("sprint") and input != Vector2.ZERO
 	
-	if player_state == PlayerState.TURNING:
+	move_multiplier = sprint_multiplier if sprinting else 1.0
+	
+	velocity = input * speed * move_multiplier
+	move_and_slide()
+	
+	select_animation()
+	update_animation_parameters()
+	update_animation_speed()
+
+func select_animation():
+	if velocity == Vector2.ZERO:
+		playback.travel("Idle")
+	else:
+		playback.travel("Walk")
+
+func update_animation_parameters():
+	if input == Vector2.ZERO:
 		return
-	elif is_moving == false:
-		process_player_movement_input()
-	elif input_direction != Vector2.ZERO:
-		anim_state.travel("Walk")
-		move(delta)
-	else:
-		anim_state.travel("Idle")
-		is_moving = false
-
-func direction_storage() -> void:
-	var directions = ["ui_left", "ui_right", "ui_up", "ui_down"]
-
-	for dir in directions:
-		if Input.is_action_just_pressed(dir):
-			direction_keys.push_back(dir)
-		elif Input.is_action_just_released(dir):
-			direction_keys.erase(dir)
-
-	if direction_keys.size() == 0:
-		direction_keys.clear()
-
-func process_player_movement_input() -> void:
-	var direction_map = {
-		"ui_left": Vector2(-1, 0),
-		"ui_right": Vector2(1, 0),
-		"ui_up": Vector2(0, -1),
-		"ui_down": Vector2(0, 1)
-	}
-	
-	if direction_keys.size() > 0:
-		var key = direction_keys.back()
-		input_direction = direction_map.get(key, Vector2.ZERO)
-	else:
-		input_direction = Vector2.ZERO
-	
-	if input_direction != Vector2.ZERO:
-		anim_tree.set("parameters/Idle/blend_position", input_direction)
-		anim_tree.set("parameters/Walk/blend_position", input_direction)
-		anim_tree.set("parameters/Turn/blend_position", input_direction)
 		
-		if need_to_turn():
-			player_state = PlayerState.TURNING
-			anim_state.travel("Turn")
-		else:
-			initial_position = position
-			is_moving = true
-	else:
-		anim_state.travel("Idle")
+	animation_tree["parameters/Idle/blend_position"] = input
+	animation_tree["parameters/Walk/blend_position"] = input
 
-func need_to_turn():
-	var new_facing_direction
-	if input_direction.x < 0:
-		new_facing_direction = FacingDirection.LEFT
-	elif input_direction.x > 0:
-		new_facing_direction = FacingDirection.RIGHT
-	elif input_direction.y < 0:
-		new_facing_direction = FacingDirection.UP
-	elif input_direction.y > 0:
-		new_facing_direction = FacingDirection.DOWN
-		
-	if facing_direction != new_facing_direction:
-		facing_direction = new_facing_direction
-		return true
-	facing_direction = new_facing_direction
-	return false
-
-func finished_turning() -> void:
-	player_state = PlayerState.IDLE
-
-func move(delta: float) -> void:
-	var desired_step: Vector2 = input_direction * TILE_SIZE / 2
-	ray.target_position = desired_step
-	ray.force_raycast_update()
-	
-	if !ray.is_colliding():
-		percent_moved_to_next_tile += walk_speed * delta
-		if percent_moved_to_next_tile >= 1.0:
-			position = initial_position + (TILE_SIZE * input_direction)
-			percent_moved_to_next_tile = 0.0
-			is_moving = false
-		else:
-			position = initial_position + (TILE_SIZE * input_direction * percent_moved_to_next_tile)
-	else:
-		percent_moved_to_next_tile = 0.0
-		is_moving = false
+func update_animation_speed():
+	if animation_player:
+		animation_player.speed_scale = move_multiplier
