@@ -1,5 +1,11 @@
 extends Node2D
 
+const BeachBiome = preload("res://biomes/beach_biome.gd")
+const GrassBiome = preload("res://biomes/grass_biome.gd")
+const TundraBiome = preload("res://biomes/tundra_biome.gd")
+const MesaBiome = preload("res://biomes/mesa_biome.gd")
+const OceanBiome = preload("res://biomes/ocean_biome.gd")
+
 @export var map_width = 400
 @export var map_height = 400
 @export var world_seed = 0
@@ -17,104 +23,42 @@ var randomNumberGenerator = RandomNumberGenerator.new()
 # Center the map around the origin
 var origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
 
-# Weighted tile variants by biome
-# TODO: Label which tiles are which
-const BIOME_TILE_VARIANTS = {
-	"Grass": [
-		# Plain Grass
-		{"Atlas_Origin": Vector2i(0, 0), "Weight": 90},
+var BIOME_DEFINITIONS = {}
+var BIOME_TILE_VARIANTS = {}
+var BIOME_OBJECTS = {}
 
-		# Seeded Grass
-		{"Atlas_Origin": Vector2i(3, 0), "Weight": 10},
-	],
-	"Tundra": [
-		{"Atlas_Origin": Vector2i(0, 3), "Weight": 90},
-		{"Atlas_Origin": Vector2i(3, 3), "Weight": 10},
-	],
-	"Mesa": [
-		{"Atlas_Origin": Vector2i(0, 6), "Weight": 90},
-		{"Atlas_Origin": Vector2i(3, 6), "Weight": 10},
-	],
-	"Beach": [
-		{"Atlas_Origin": Vector2i(0, 9), "Weight": 95},
-		{"Atlas_Origin": Vector2i(3, 9), "Weight": 5},
-	],
-	"Ocean": [
-		{"Atlas_Origin": Vector2i(0, 12), "Weight": 95},
-		{"Atlas_Origin": Vector2i(3, 12), "Weight": 2},
-		{"Atlas_Origin": Vector2i(6, 12), "Weight": 1},
-		{"Atlas_Origin": Vector2i(9, 12), "Weight": 1},
-		{"Atlas_Origin": Vector2i(12, 12), "Weight": 1},
-	],
-}
+func initialize_biomes() -> void:
+	BIOME_DEFINITIONS = {
+		"Grass": {
+			"TileVariants": GrassBiome.TILE_VARIANTS,
+			"Objects": GrassBiome.OBJECTS,
+		},
+		"Tundra": {
+			"TileVariants": TundraBiome.TILE_VARIANTS,
+			"Objects": TundraBiome.OBJECTS,
+		},
+		"Mesa": {
+			"TileVariants": MesaBiome.TILE_VARIANTS,
+			"Objects": MesaBiome.OBJECTS,
+		},
+		"Beach": {
+			"TileVariants": BeachBiome.TILE_VARIANTS,
+			"Objects": BeachBiome.OBJECTS,
+			"PickTile": Callable(BeachBiome, "pick_tile"),
+		},
+		"Ocean": {
+			"TileVariants": OceanBiome.TILE_VARIANTS,
+			"Objects": OceanBiome.OBJECTS,
+		},
+	}
 
-# Atlas_Origin refers to the tile unit position of the object in the tileset
-# Size refers to width x height in tile units
-# Chance is the per-tile percent chance for each object to be selected for potential placement (depends on available biome space, etc.)
-# TODO: Label which objects are which
-const BIOME_OBJECTS = {
-	"Grass": [
-		# Shrub
-		{"Atlas_Origin": Vector2i(11, 0), "Size": Vector2i(1, 1), "Chance": 3.0},
+	BIOME_TILE_VARIANTS.clear()
+	BIOME_OBJECTS.clear()
+	for biome_name in BIOME_DEFINITIONS.keys():
+		var definition: Dictionary = BIOME_DEFINITIONS[biome_name]
+		BIOME_TILE_VARIANTS[biome_name] = definition.get("TileVariants", [])
+		BIOME_OBJECTS[biome_name] = definition.get("Objects", [])
 
-		#Flower
-		{"Atlas_Origin": Vector2i(11, 1), "Size": Vector2i(1, 1), "Chance": 3.0},
-
-		# Tree 1x2
-		{"Atlas_Origin": Vector2i(12, 0), "Size": Vector2i(1, 2), "Chance": 5.0},
-
-		# Stacked Rocks
-		{"Atlas_Origin": Vector2i(13, 0), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Pebbles
-		{"Atlas_Origin": Vector2i(14, 0), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Mushrooms
-		{"Atlas_Origin": Vector2i(15, 0), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Bush
-		{"Atlas_Origin": Vector2i(13, 1), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Flower Patch
-		{"Atlas_Origin": Vector2i(14, 1), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Mini-Bush
-		{"Atlas_Origin": Vector2i(15, 1), "Size": Vector2i(1, 1), "Chance": 1.0},
-
-		# Tree 3x3
-		{"Atlas_Origin": Vector2i(16, 0), "Size": Vector2i(3, 3), "Chance": 10.0},
-	],
-	"Tundra": [
-		{"Atlas_Origin": Vector2i(11, 3), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(11, 4), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(12, 3), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(12, 4), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(13, 3), "Size": Vector2i(2, 2), "Chance": 5.0},
-		{"Atlas_Origin": Vector2i(15, 3), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(15, 4), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(16, 3), "Size": Vector2i(3, 3), "Chance": 10.0},
-	],
-	"Mesa": [
-		{"Atlas_Origin": Vector2i(11, 6), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(11, 7), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(12, 6), "Size": Vector2i(1, 2), "Chance": 5.0},
-		{"Atlas_Origin": Vector2i(13, 6), "Size": Vector2i(2, 2), "Chance": 5.0},
-		{"Atlas_Origin": Vector2i(15, 6), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(15, 7), "Size": Vector2i(1, 1), "Chance": 1.0},
-		{"Atlas_Origin": Vector2i(16, 6), "Size": Vector2i(3, 3), "Chance": 2.5},
-	],
-	"Beach": [
-		{"Atlas_Origin": Vector2i(11, 9), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(11, 10), "Size": Vector2i(1, 1), "Chance": 3.0},
-		{"Atlas_Origin": Vector2i(12, 9), "Size": Vector2i(1, 1), "Chance": 0.5},
-		{"Atlas_Origin": Vector2i(12, 10), "Size": Vector2i(1, 1), "Chance": 0.5},
-		{"Atlas_Origin": Vector2i(13, 9), "Size": Vector2i(2, 2), "Chance": 5.0},
-		{"Atlas_Origin": Vector2i(15, 9), "Size": Vector2i(1, 1), "Chance": 0.5},
-		{"Atlas_Origin": Vector2i(15, 10), "Size": Vector2i(1, 1), "Chance": 0.5},
-		{"Atlas_Origin": Vector2i(16, 9), "Size": Vector2i(3, 3), "Chance": 2.5},
-	],
-	"Ocean": [],
-}
 
 func generate_map(period, octave):
 	# Set the seed and parameters for FastNoiseLite
@@ -136,23 +80,24 @@ func generate_map(period, octave):
 	return gridName
 
 # Biome generation which is a function of altitude, temperature, and moisture
-# TODO: Add more biomes and polish these ranges
 func get_biome(alt, temp, moist):
 	if alt < 0.2:
 		return "Ocean"
-	elif in_between(alt, 0.2, 0.35):
+	elif alt < 0.35:
 		return "Beach"
-	elif in_between(alt, 0.35, 0.8):
-		if in_between(moist, 0, 0.9) and in_between(temp, 0, 0.6):
-			return "Grass"
-		elif in_between(moist, 0.4, 0.9) and temp > 0.6:
-			return "Mesa"
-		elif temp > 0.6 and moist < 0.4:
-			return "Mesa"
-		elif moist >= 0.9:
-			return "Ocean"
-	else:
+	elif alt >= 0.8:
 		return "Tundra"
+
+	if moist < 0.4:
+		if temp <= 0.6:
+			return "Grass"
+		return "Mesa"
+	elif moist < 0.9:
+		if temp <= 0.6:
+			return "Grass"
+		return "Mesa"
+	else:
+		return "Grass"
 
 # Function to pick the tile variant based on the biome and its weights
 func pick_weighted_tile(biome_name: String) -> Vector2i:
@@ -191,10 +136,11 @@ func pick_object_by_chance(biome_name: String) -> Dictionary:
 	return {}
 
 # Helper function to check if an object can be placed at the given position based on its size and the respective biome
+# Note: Anchor tile is bottom left for multi-tile objects
 func can_place_object(anchor_pos: Vector2i, biome_name: String, size: Vector2i, occupied: Dictionary) -> bool:
 	# Require the target biome for the full area plus a 1-tile border on all sides
 	for dx in range(-1, size.x + 1):
-		for dy in range(-1, size.y + 1):
+		for dy in range(-size.y, 2):
 			var check_pos = anchor_pos + Vector2i(dx, dy)
 			if biome.get(check_pos) != biome_name:
 				return false
@@ -202,7 +148,7 @@ func can_place_object(anchor_pos: Vector2i, biome_name: String, size: Vector2i, 
 	# But keep overlap prevention limited to the actual tile area
 	for dx in range(size.x):
 		for dy in range(size.y):
-			var check_pos = anchor_pos + Vector2i(dx, dy)
+			var check_pos = anchor_pos + Vector2i(dx, -dy)
 			if occupied.has(check_pos):
 				return false
 
@@ -219,7 +165,7 @@ func place_object(anchor_pos: Vector2i, object: Dictionary, occupied: Dictionary
 	# The full area is still accounted for through occupied cells
 	for dx in range(size.x):
 		for dy in range(size.y):
-			var place_pos = anchor_pos + Vector2i(dx, dy)
+			var place_pos = anchor_pos + Vector2i(dx, -dy)
 			occupied[place_pos] = true
 
 # Main function to scatter biome objects based on object chances
@@ -249,6 +195,7 @@ func scatter_biome_objects() -> void:
 func set_tile():
 	environmentLayer.clear()
 
+	# First - Compute the biome for every tile
 	for x in range(map_width):
 		for y in range(map_height):
 			var pos = Vector2i(x, y) + origin
@@ -257,14 +204,22 @@ func set_tile():
 			var temp = temperature[pos]
 			var moist = moisture[pos]
 
-			var current_biome = get_biome(alt, temp, moist)
-			biome[pos] = current_biome
-			environmentLayer.set_cell(pos, 0, pick_weighted_tile(current_biome))
+			biome[pos] = get_biome(alt, temp, moist)
 
-# Helper comparison function to determine biome
-func in_between(val, start, end):
-	if start <= val and val < end:
-		return true
+	# Second - Place tiles using the completed biome map
+	for x in range(map_width):
+		for y in range(map_height):
+			var pos = Vector2i(x, y) + origin
+			var current_biome = biome[pos]
+			
+			# Check if the biome has a custom tile picking function and use it if available
+			# Otherwise, pick a weighted tile variant
+			var biome_definition: Dictionary = BIOME_DEFINITIONS.get(current_biome, {})
+			var custom_pick_tile: Callable = biome_definition.get("PickTile", Callable())
+			if custom_pick_tile.is_valid():
+				environmentLayer.set_cell(pos, 0, custom_pick_tile.call(pos, biome, Callable(self, "pick_weighted_tile")))
+			else:
+				environmentLayer.set_cell(pos, 0, pick_weighted_tile(current_biome))
 
 # Helper function to better visualize the procedurally generated world when pressing space bar/enter
 func _input(event):
@@ -280,6 +235,7 @@ func _ready() -> void:
 	# Set the random number generator seed to world_seed
 	# Ensures consistent tile variant selection across runs
 	randomNumberGenerator.seed = world_seed
+	initialize_biomes()
 
 	# Arbitrary values to input into noise generator
 	temperature = generate_map(300, 5)
