@@ -24,41 +24,39 @@ var randomNumberGenerator = RandomNumberGenerator.new()
 var origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
 
 var BIOME_DEFINITIONS = {}
-var BIOME_TILE_VARIANTS = {}
 var BIOME_OBJECTS = {}
+var BIOME_TERRAINS = {}
 
 func initialize_biomes() -> void:
 	BIOME_DEFINITIONS = {
 		"Grass": {
-			"TileVariants": GrassBiome.TILE_VARIANTS,
+			"Terrain": 0,
 			"Objects": GrassBiome.OBJECTS,
 		},
 		"Tundra": {
-			"TileVariants": TundraBiome.TILE_VARIANTS,
+			"Terrain": 1,
 			"Objects": TundraBiome.OBJECTS,
 		},
 		"Mesa": {
-			"TileVariants": MesaBiome.TILE_VARIANTS,
+			"Terrain": 2,
 			"Objects": MesaBiome.OBJECTS,
 		},
 		"Beach": {
-			"TileVariants": BeachBiome.TILE_VARIANTS,
+			"Terrain": 3,
 			"Objects": BeachBiome.OBJECTS,
-			"PickTile": Callable(BeachBiome, "pick_tile"),
 		},
 		"Ocean": {
-			"TileVariants": OceanBiome.TILE_VARIANTS,
+			"Terrain": 4,
 			"Objects": OceanBiome.OBJECTS,
 		},
 	}
 
-	BIOME_TILE_VARIANTS.clear()
 	BIOME_OBJECTS.clear()
+	BIOME_TERRAINS.clear()
 	for biome_name in BIOME_DEFINITIONS.keys():
 		var definition: Dictionary = BIOME_DEFINITIONS[biome_name]
-		BIOME_TILE_VARIANTS[biome_name] = definition.get("TileVariants", [])
-		BIOME_OBJECTS[biome_name] = definition.get("Objects", [])
-
+		BIOME_OBJECTS[biome_name] = definition.get("Objects")
+		BIOME_TERRAINS[biome_name] = int(definition.get("Terrain"))
 
 func generate_map(period, octave):
 	# Set the seed and parameters for FastNoiseLite
@@ -98,26 +96,6 @@ func get_biome(alt, temp, moist):
 		return "Mesa"
 	else:
 		return "Grass"
-
-# Function to pick the tile variant based on the biome and its weights
-func pick_weighted_tile(biome_name: String) -> Vector2i:
-	var variants = BIOME_TILE_VARIANTS.get(biome_name)
-	if variants.is_empty():
-		return Vector2i.ZERO
-
-	var total_weight = 0.0
-	for variant in variants:
-		total_weight += float(variant["Weight"])
-
-	var roll = randomNumberGenerator.randf_range(0.0, total_weight)
-	var running = 0.0
-	for variant in variants:
-		running += float(variant["Weight"])
-		if roll < running:
-			return variant["Atlas_Origin"]
-
-	# Fallback
-	return variants[-1]["Atlas_Origin"]
 
 # Function to pick one object by chance in the range [0, 100)
 func pick_object_by_chance(biome_name: String) -> Dictionary:
@@ -194,6 +172,7 @@ func scatter_biome_objects() -> void:
 
 func set_tile():
 	environmentLayer.clear()
+	var biome_cells = {}
 
 	# First - Compute the biome for every tile
 	for x in range(map_width):
@@ -204,22 +183,24 @@ func set_tile():
 			var temp = temperature[pos]
 			var moist = moisture[pos]
 
-			biome[pos] = get_biome(alt, temp, moist)
+			var biome_name = get_biome(alt, temp, moist)
+			biome[pos] = biome_name
 
-	# Second - Place tiles using the completed biome map
-	for x in range(map_width):
-		for y in range(map_height):
-			var pos = Vector2i(x, y) + origin
-			var current_biome = biome[pos]
-			
-			# Check if the biome has a custom tile picking function and use it if available
-			# Otherwise, pick a weighted tile variant
-			var biome_definition: Dictionary = BIOME_DEFINITIONS.get(current_biome, {})
-			var custom_pick_tile: Callable = biome_definition.get("PickTile", Callable())
-			if custom_pick_tile.is_valid():
-				environmentLayer.set_cell(pos, 0, custom_pick_tile.call(pos, biome, Callable(self, "pick_weighted_tile")))
-			else:
-				environmentLayer.set_cell(pos, 0, pick_weighted_tile(current_biome))
+			if not biome_cells.has(biome_name):
+				biome_cells[biome_name] = []
+			biome_cells[biome_name].append(pos)
+
+	# Second - Paint all biome tiles through terrain connection
+	for biome_name in biome_cells.keys():
+		var cells: Array = biome_cells[biome_name]
+
+		# If there are *NO* cells for this biome; skip
+		if cells.is_empty():
+			continue
+
+		var terrain = BIOME_TERRAINS.get(biome_name, -1)
+
+		environmentLayer.set_cells_terrain_connect(cells, 0, terrain)
 
 # Helper function to better visualize the procedurally generated world when pressing space bar/enter
 func _input(event):

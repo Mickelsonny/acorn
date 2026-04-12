@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://jastkk7h3umq"]
+[gd_scene load_steps=5 format=3 uid="uid://jastkk7h3umq"]
 
 [ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
-[ext_resource type="TileSet" uid="uid://cdrhhwi6ve2qv" path="res://tiles/environment_object_tiles.tres" id="2_41wxt"]
+[ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/terrains.tres" id="2_41wxt"]
+[ext_resource type="TileSet" uid="uid://bcb7bi3xakdox" path="res://tiles/objects.tres" id="3_14j13"]
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
 
 [node name="ProceduralGen" type="Node2D"]
@@ -12,7 +13,7 @@ y_sort_enabled = true
 tile_set = ExtResource("2_41wxt")
 
 [node name="ObjectLayer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("2_41wxt")
+tile_set = ExtResource("3_14j13")
 
 [node name="Player" parent="." instance=ExtResource("3_41wxt")]
 
