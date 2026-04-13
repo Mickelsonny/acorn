@@ -6,8 +6,8 @@ const TundraBiome = preload("res://biomes/tundra_biome.gd")
 const MesaBiome = preload("res://biomes/mesa_biome.gd")
 const OceanBiome = preload("res://biomes/ocean_biome.gd")
 
-@export var map_width = 400
-@export var map_height = 400
+@export var map_width = 200
+@export var map_height = 200
 @export var world_seed = 0
 @onready var environmentLayer = $EnvironmentLayer
 @onready var objectLayer = $ObjectLayer
