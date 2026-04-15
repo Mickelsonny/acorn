@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://k64hf3ijl82v"
-path="res://.godot/imported/tundra_tileset.png-5cbe614c73e751c4f96ce209963f5005.ctex"
+uid="uid://t6baixyq274i"
+path="res://.godot/imported/beach_ground_tileset.png-cd4b243eb7d133e0711f9e3061bac010.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/tundra_tileset.png"
-dest_files=["res://.godot/imported/tundra_tileset.png-5cbe614c73e751c4f96ce209963f5005.ctex"]
+source_file="res://assets/tilesets/beach_ground_tileset.png"
+dest_files=["res://.godot/imported/beach_ground_tileset.png-cd4b243eb7d133e0711f9e3061bac010.ctex"]
 
 [params]
 

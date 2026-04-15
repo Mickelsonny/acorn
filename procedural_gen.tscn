@@ -1,19 +1,32 @@
 [gd_scene load_steps=5 format=3 uid="uid://jastkk7h3umq"]
 
 [ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
-[ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/terrains.tres" id="2_41wxt"]
-[ext_resource type="TileSet" uid="uid://bcb7bi3xakdox" path="res://tiles/objects.tres" id="3_14j13"]
+[ext_resource type="TileSet" uid="uid://d27qhqtqcpkmj" path="res://tiles/ground_terrains.tres" id="2_41wxt"]
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
+[ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/cliff_terrains.tres" id="4_w6j1j"]
 
 [node name="ProceduralGen" type="Node2D"]
 script = ExtResource("1_tjmt1")
 
-[node name="EnvironmentLayer" type="TileMapLayer" parent="."]
-y_sort_enabled = true
+[node name="GroundLayer" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_41wxt")
 
+[node name="Elevation1Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_w6j1j")
+
+[node name="Elevation2Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_w6j1j")
+
+[node name="Elevation3Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_w6j1j")
+
+[node name="Elevation4Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_w6j1j")
+
+[node name="Elevation5Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("4_w6j1j")
+
 [node name="ObjectLayer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("3_14j13")
 
 [node name="Player" parent="." instance=ExtResource("3_41wxt")]
 

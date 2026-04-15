@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://jastkk7h3umq"]
+
+[ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
+[ext_resource type="TileSet" uid="uid://d27qhqtqcpkmj" path="res://tiles/ground_terrains.tres" id="2_41wxt"]
+[ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/cliff_terrains.tres" id="3_14j13"]
+[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
+
+[node name="ProceduralGen" type="Node2D"]
+script = ExtResource("1_tjmt1")
+
+[node name="GroundLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_41wxt")
+
+[node name="ElevationLayer" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("3_14j13")
+
+[node name="ObjectLayer" type="TileMapLayer" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("3_41wxt")]
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
+remote_path = NodePath("../../Camera2D")
+
+[node name="Camera2D" type="Camera2D" parent="."]
