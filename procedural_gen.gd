@@ -12,7 +12,7 @@ const BiomeObjectPlacer = preload("res://object_placement.gd")
 @export var map_height = 100
 @export var world_seed = 0
 
-# Arbitrary values to input into noise generator
+# Arbitrary values to input into noise generator (TODO: Find better values for larger sized maps)
 # Biome generation
 @export var temperature_period: float = 100.0
 @export var moisture_period: float = 100.0
@@ -54,7 +54,7 @@ var origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
 # Painting order of terrain
 const BIOME_PAINT_ORDER = ["Grass", "Tundra", "Mesa", "Beach"]
 
-# Land biomes and directions for bounding elevation to within the same biome type
+# Defined land biomes + directions for bounding elevation layers
 const LAND_BIOMES = ["Grass", "Tundra", "Mesa", "Beach"]
 const CARDINAL_DIRECTIONS = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 
@@ -160,6 +160,22 @@ func is_inside_biome_padding(pos: Vector2i, biome_name: String, padding: int = 3
 
 	return true
 
+# Helper function to checks if a tile is at least _padding_ tiles away from the edge of a painted layer
+func is_inside_layer_padding(pos: Vector2i, layer_lookup: Dictionary, padding: int = 2) -> bool:
+	if padding <= 0:
+		return true
+
+	for dir in CARDINAL_DIRECTIONS:
+		for step in range(1, padding + 1):
+			var neighbor = pos + (dir * step)
+			if not is_inside_map(neighbor):
+				return false
+
+			if not layer_lookup.has(neighbor):
+				return false
+
+	return true
+
 # Helper function to expand the given biome cells' perimeter by a specified border size; 1 tile by default
 func expand_cells_with_border(cells: Array, border_size: int = 1) -> Array:
 	var expanded_lookup = {}
@@ -184,7 +200,7 @@ func generate_elevation_map(biome_cells: Dictionary) -> void:
 	for biome_name in LAND_BIOMES:
 		var cells: Array = biome_cells.get(biome_name)
 		for pos in cells:
-			# Padding of 3 tiles to allow for the groundLayer's biome transitions to be shown
+			# Padding of THREE tiles to allow for the groundLayer's biome transitions to be shown
 			if not is_inside_biome_padding(pos, biome_name, 3):
 				continue
 
@@ -245,15 +261,27 @@ func paint_elevation_layers(biome_cells: Dictionary) -> void:
 		if terrain == -1:
 			continue
 
+		var previous_layer_lookup = {}
+
 		for level in range(1, 6):
 			var level_cells: Array = []
 			for pos in cells:
 				# Default value of 0 for tiles w/o elevation
-				if elevation.get(pos, 0) >= level:
-					level_cells.append(pos)
+				if elevation.get(pos, 0) < level:
+					continue
+
+				# Each higher layer is inset from the layer below by TWO tiles
+				if level > 1 and not is_inside_layer_padding(pos, previous_layer_lookup, 2):
+					continue
+
+				level_cells.append(pos)
 
 			if not level_cells.is_empty():
 				elevationLayers[level - 1].set_cells_terrain_connect(level_cells, 0, terrain, false)
+
+			previous_layer_lookup.clear()
+			for pos in level_cells:
+				previous_layer_lookup[pos] = true
 
 func set_tile():
 	groundLayer.clear()
