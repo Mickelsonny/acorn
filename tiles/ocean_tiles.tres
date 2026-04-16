@@ -1,0 +1,18 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dctaddyxjqmo2"]
+
+[ext_resource type="Texture2D" uid="uid://bjlc55p6jek8x" path="res://assets/tilesets/ocean_all_tileset.png" id="1_1mjsc"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ovnor"]
+texture = ExtResource("1_1mjsc")
+0:0/animation_frame_0/duration = 0.1
+0:0/animation_frame_1/duration = 0.1
+0:0/animation_frame_2/duration = 0.1
+0:0/animation_frame_3/duration = 0.1
+0:0/animation_frame_4/duration = 0.1
+0:0/animation_frame_5/duration = 0.1
+0:0/animation_frame_6/duration = 0.1
+0:0/animation_frame_7/duration = 0.1
+0:0/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_ovnor")

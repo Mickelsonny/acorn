@@ -1,12 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://jastkk7h3umq"]
+[gd_scene load_steps=6 format=3 uid="uid://jastkk7h3umq"]
 
 [ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
 [ext_resource type="TileSet" uid="uid://d27qhqtqcpkmj" path="res://tiles/ground_terrains.tres" id="2_41wxt"]
+[ext_resource type="TileSet" uid="uid://dctaddyxjqmo2" path="res://tiles/ocean_tiles.tres" id="2_k5wtf"]
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
 [ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/cliff_terrains.tres" id="4_w6j1j"]
 
 [node name="ProceduralGen" type="Node2D"]
 script = ExtResource("1_tjmt1")
+
+[node name="OceanLayer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_k5wtf")
 
 [node name="GroundLayer" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_41wxt")

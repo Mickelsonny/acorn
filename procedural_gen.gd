@@ -8,27 +8,30 @@ const OceanBiome = preload("res://biomes/ocean_biome.gd")
 const BiomeObjectPlacer = preload("res://object_placement.gd")
 
 # Bounding map & world variables
-@export var map_width = 100
-@export var map_height = 100
+@export var map_width = 200
+@export var map_height = 200
 @export var world_seed = 0
 
-# Arbitrary values to input into noise generator (TODO: Find better values for larger sized maps)
+# TODO: Find better values for larger sized maps
+# Arbitrary values to input into noise generator
 # Biome generation
-@export var temperature_period: float = 100.0
-@export var moisture_period: float = 100.0
-@export var altitude_period: float = 150.0
-@export var temperature_octaves: int = 7
-@export var moisture_octaves: int = 7
+@export var temperature_period: float = 150.0
+@export var moisture_period: float = 150.0
+@export var altitude_period: float = 120.0
+@export var temperature_octaves: int = 6
+@export var moisture_octaves: int = 6
 @export var altitude_octaves: int = 8
 
 # Elevation generation
 @export var elevation_base_period: float = 120.0
-@export var elevation_detail_period: float = 50.0
-@export var elevation_base_octaves: int = 5
-@export var elevation_detail_octaves: int = 3
+@export var elevation_detail_period: float = 60.0
+@export var elevation_base_octaves: int = 6
+@export var elevation_detail_octaves: int = 8
 @export var elevation_detail_strength: float = 0.5
-@export var elevation_smoothing_passes: int = 7
+@export var elevation_smoothing_passes: int = 4
 
+# TileMapLayer nodes
+@onready var oceanLayer = $OceanLayer
 @onready var groundLayer = $GroundLayer
 @onready var objectLayer = $ObjectLayer
 @onready var elevationLayers: Array[TileMapLayer] = [
@@ -48,19 +51,15 @@ var elevation = {}
 var fastNoiseLite = FastNoiseLite.new()
 var randomNumberGenerator = RandomNumberGenerator.new()
 
-# Center the map around the origin
-var origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
-
-# Painting order of terrain
-const BIOME_PAINT_ORDER = ["Grass", "Tundra", "Mesa", "Beach"]
-
-# Defined land biomes + directions for bounding elevation layers
-const LAND_BIOMES = ["Grass", "Tundra", "Mesa", "Beach"]
-const CARDINAL_DIRECTIONS = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+var map_origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
 
 var BIOME_DEFINITIONS = {}
 var BIOME_OBJECTS = {}
 var BIOME_TERRAINS = {}
+
+# Self-defined land biomes + directions for bounding elevation layers
+const LAND_BIOMES = ["Grass", "Tundra", "Mesa", "Beach"]
+const CARDINAL_DIRECTIONS = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 
 func initialize_biomes() -> void:
 	BIOME_DEFINITIONS = {
@@ -82,6 +81,8 @@ func initialize_biomes() -> void:
 		},
 		"Ocean": {
 			"Terrain": 4,
+
+			# TODO: Get rid of this eventually, doesn't work since this is just the beach/ocean transition terrain
 			"Objects": OceanBiome.OBJECTS,
 		},
 	}
@@ -103,7 +104,7 @@ func generate_map(period, octave, seed_offset: int = 0):
 	var gridName = {}
 	for x in range(map_width):
 		for y in range(map_height):
-			var pos = Vector2i(x, y) + origin
+			var pos = Vector2i(x, y) + map_origin
 
 			# Returns the normalized value of the noise at the given coordinate position
 			var rand: float = (fastNoiseLite.get_noise_2d(float(pos.x), float(pos.y)) + 1.0) * 0.5
@@ -119,27 +120,23 @@ func get_biome(alt, temp, moist):
 		return "Ocean"
 	elif alt < 0.35:
 		return "Beach"
-	elif alt >= 0.7:
+	elif alt >= 0.75:
 		return "Tundra"
 
 	if moist < 0.4:
-		if temp <= 0.6:
+		if temp <= 0.55:
 			return "Grass"
 		return "Mesa"
 	elif moist < 0.9:
-		if temp <= 0.6:
+		if temp <= 0.55:
 			return "Grass"
 		return "Mesa"
 	else:
 		return "Grass"
 
-# Main function to scatter biome objects based on object chances
-func scatter_biome_objects() -> void:
-	BiomeObjectPlacer.scatter_biome_objects(objectLayer, map_width, map_height, origin, biome, BIOME_OBJECTS, randomNumberGenerator)
-
 # Helper function to check if a given position is within the bounds of the map
 func is_inside_map(pos: Vector2i) -> bool:
-	return pos.x >= origin.x and pos.x < origin.x + map_width and pos.y >= origin.y and pos.y < origin.y + map_height
+	return pos.x >= map_origin.x and pos.x < map_origin.x + map_width and pos.y >= map_origin.y and pos.y < map_origin.y + map_height
 
 # Helper function to checks if a tile is at least _padding_ tiles away from any biome boundary
 func is_inside_biome_padding(pos: Vector2i, biome_name: String, padding: int = 3) -> bool:
@@ -176,8 +173,35 @@ func is_inside_layer_padding(pos: Vector2i, layer_lookup: Dictionary, padding: i
 
 	return true
 
-# Helper function to expand the given biome cells' perimeter by a specified border size; 1 tile by default
+# Helper function to expand/shrink the given biome cells' perimeter by a specified border size; +1 tile by default
 func expand_cells_with_border(cells: Array, border_size: int = 1) -> Array:
+	# Shrinkage
+	if border_size < 0:
+		var cell_lookup = {}
+
+		for cell in cells:
+			cell_lookup[cell] = true
+
+		var shrunk_lookup = {}
+		var radius = absi(border_size)
+
+		for cell in cells:
+			var is_valid = true
+			for dx in range(-radius, radius + 1):
+				for dy in range(-radius, radius + 1):
+					var neighbor = cell + Vector2i(dx, dy)
+					if not cell_lookup.has(neighbor):
+						is_valid = false
+						break
+				if not is_valid:
+					break
+
+			if is_valid:
+				shrunk_lookup[cell] = true
+
+		return shrunk_lookup.keys()
+
+	# Expansion
 	var expanded_lookup = {}
 
 	for cell in cells:
@@ -283,18 +307,14 @@ func paint_elevation_layers(biome_cells: Dictionary) -> void:
 			for pos in level_cells:
 				previous_layer_lookup[pos] = true
 
-func set_tile():
-	groundLayer.clear()
-	for layer in elevationLayers:
-		layer.clear()
-
+# Function to compute the biome for every tile
+func compute_biome_cells() -> Dictionary:
 	biome.clear()
 	var biome_cells = {}
 
-	# First - Compute the biome for every tile
 	for x in range(map_width):
 		for y in range(map_height):
-			var pos = Vector2i(x, y) + origin
+			var pos = Vector2i(x, y) + map_origin
 
 			var alt = altitude[pos]
 			var temp = temperature[pos]
@@ -307,8 +327,24 @@ func set_tile():
 				biome_cells[biome_name] = []
 			biome_cells[biome_name].append(pos)
 
-	# Second - Paint all biome tiles through terrain connection
+	return biome_cells
+
+# Function to paint the terrain of all biomes on groundLayer using autotiling for terrain connection
+func paint_normal_tiles(biome_cells: Dictionary) -> void:
+	# Paint "ghost" ocean tiles on groundLayer to properly autotile the beach/ocean transition
+	var ocean_cells: Array = biome_cells.get("Ocean")
+	var ocean_terrain = BIOME_TERRAINS.get("Ocean")
+	groundLayer.set_cells_terrain_connect(ocean_cells, 0, ocean_terrain, false)
+
+	# Specific painting order to avoid grass prioritization
+	const BIOME_PAINT_ORDER = ["Grass", "Tundra", "Mesa", "Beach", "Ocean"]
+
+	# Paint the rest of the biomes' terrain normally on groundLayer
 	for biome_name in BIOME_PAINT_ORDER:
+		if biome_name == "Ocean":
+			# Handled later on oceanLayer
+			continue
+
 		var cells: Array = biome_cells.get(biome_name)
 
 		# If there are *NO* cells for this biome; skip
@@ -320,8 +356,36 @@ func set_tile():
 
 		groundLayer.set_cells_terrain_connect(expanded_cells, 0, terrain, false)
 
+# Function to paint ocean tiles on oceanLayer and erase the "ghost" ocean tiles on groundLayer 
+func paint_ocean_tiles(biome_cells: Dictionary) -> void:
+	var ocean_cells: Array = biome_cells.get("Ocean")
+
+	# Shrunk by 1 tile to not destroy the beach/ocean transition tiles
+	for pos in expand_cells_with_border(ocean_cells, -1):
+		groundLayer.erase_cell(pos)
+
+	for pos in ocean_cells:
+		oceanLayer.set_cell(pos, 0, Vector2i(0, 0))
+
+# Function to generate and paint the elevation layers that are above groundLayer
+func paint_elevation_tiles(biome_cells: Dictionary) -> void:
 	generate_elevation_map(biome_cells)
 	paint_elevation_layers(biome_cells)
+
+func set_tile():
+	oceanLayer.clear()
+	groundLayer.clear()
+	for layer in elevationLayers:
+		layer.clear()
+
+	var biome_cells = compute_biome_cells()
+
+	paint_normal_tiles(biome_cells)
+	paint_ocean_tiles(biome_cells)
+	paint_elevation_tiles(biome_cells)
+
+func scatter_biome_objects() -> void:
+	BiomeObjectPlacer.scatter_biome_objects(objectLayer, map_width, map_height, map_origin, biome, BIOME_OBJECTS, randomNumberGenerator)
 
 # Helper function to better visualize the procedurally generated world when pressing space bar/enter
 func _input(event):
