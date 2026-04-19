@@ -1,40 +1,50 @@
-[gd_scene load_steps=6 format=3 uid="uid://jastkk7h3umq"]
+[gd_scene load_steps=7 format=4 uid="uid://jastkk7h3umq"]
 
 [ext_resource type="Script" uid="uid://bu38i2iall4sn" path="res://procedural_gen.gd" id="1_tjmt1"]
 [ext_resource type="TileSet" uid="uid://d27qhqtqcpkmj" path="res://tiles/ground_terrains.tres" id="2_41wxt"]
 [ext_resource type="TileSet" uid="uid://dctaddyxjqmo2" path="res://tiles/ocean_tiles.tres" id="2_k5wtf"]
+[ext_resource type="TileSet" uid="uid://bys4ttfaj0eaw" path="res://tiles/underwater_terrains.tres" id="2_ovnor"]
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player.tscn" id="3_41wxt"]
-[ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/cliff_terrains.tres" id="4_w6j1j"]
+[ext_resource type="PackedScene" uid="uid://b5na5mc2uer7h" path="res://elevation_tile_map_layer.tscn" id="5_omogb"]
 
 [node name="ProceduralGen" type="Node2D"]
 script = ExtResource("1_tjmt1")
 
+[node name="Underwater1Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_ovnor")
+
+[node name="Underwater2Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_ovnor")
+
+[node name="Underwater3Layer" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_ovnor")
+
 [node name="OceanLayer" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_k5wtf")
 
-[node name="GroundLayer" type="TileMapLayer" parent="."]
+[node name="GroundLayer" parent="." instance=ExtResource("5_omogb")]
+tile_map_data = PackedByteArray("AAD/////AQAJAAIAAAD+////AQAJAAYAAAD+/wAAAQAJAAYAAAD//wAAAQAJAAoAAAAAAAAAAQAJAAoAAAAAAAEAAQAJAAYAAAABAAEAAQAJAAoAAAABAAAAAQAJAAYAAAACAAAAAQAJAAYAAAACAP//AQAJAAYAAAABAP//AQAJAAYAAAABAP7/AQAJAAIAAAAAAP7/AQAJAAoAAAD///7/AQAJAAoAAAD9////AQAJAAYAAAD9/wAAAQAJAAIAAAD9/wEAAQAJAAIAAAD9/wIAAQAJAAYAAAD+/wIAAQAJAAYAAAD//wIAAQAJAAIAAAAAAAIAAQAJAAoAAAABAAIAAQAJAAYAAAAAAP//AQAJAAIAAAD+//7/AQAJAAoAAAD+/wEAAQAJAAYAAAD//wEAAQAJAAIAAAACAAEAAQAJAAIAAAADAAEAAQAJAAIAAAADAAAAAQAJAAIAAAADAP//AQAJAAoAAAD9//7/AQAJAAYAAAD8////AQAJAAIAAAD7////AQAJAAYAAAD7/wAAAQAJAAoAAAD7/wEAAQAJAAoAAAD8/wEAAQAJAAYAAAD8/wIAAQAJAAoAAAD9/wMAAQAJAAIAAAD+/wMAAQAJAAYAAAD//wMAAQAJAAIAAAD8//7/AQAJAAIAAAD8/wAAAQAJAAYAAAAAAAMAAQAJAAoAAAABAAMAAQAJAAYAAAACAAIAAQAJAAoAAAADAAIAAQAJAAYAAAAEAAEAAQAJAAoAAAAEAAAAAQAJAAoAAAADAP7/AQAJAAIAAAACAP7/AQAJAAoAAAD8/wMAAQAJAAIAAAD9//3/AQAJAAoAAAD8//3/AQAJAAIAAAD7//7/AQAJAAYAAAD7/wIAAQAJAAoAAAD6/wIAAQAJAAoAAAD6/wMAAQAJAAIAAAD7/wMAAQAJAAYAAAD7/wQAAQAJAAYAAAD8/wQAAQAJAAYAAAD9/wQAAQAJAAIAAAD+/wQAAQAJAAoAAAD6/wEAAQAJAAIAAAD5/wEAAQAJAAYAAAD4/wEAAQAJAAoAAAD4/wIAAQAJAAYAAAD3/wIAAQAJAAoAAAD3/wMAAQAJAAIAAAD3/wQAAQAJAAIAAAD4/wQAAQAJAAoAAAD4/wUAAQAJAAYAAAD5/wUAAQAJAAoAAAD6/wUAAQAJAAYAAAD7/wUAAQAJAAoAAAD8/wUAAQAJAAIAAAD9/wUAAQAJAAIAAAD+/wUAAQAJAAYAAAD//wQAAQAJAAYAAAD6/wQAAQAJAAIAAAD5/wMAAQAJAAYAAAD4/wMAAQAJAAYAAAD5/wQAAQAJAAIAAAD6////AQAJAAYAAAD5////AQAJAAIAAAD4////AQAJAAIAAAD3////AQAJAAYAAAD3/wAAAQAJAAIAAAD3/wEAAQAJAAoAAAD6/wAAAQAJAAYAAAD5/wAAAQAJAAoAAAD5/wIAAQAJAAoAAAD4/wAAAQAJAAoAAAA=")
 tile_set = ExtResource("2_41wxt")
 
-[node name="Elevation1Layer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("4_w6j1j")
+[node name="Elevation1Layer" parent="." instance=ExtResource("5_omogb")]
+tile_map_data = PackedByteArray("AAD9/wEAAgAGAAEAAAD+/wEAAgALAAAAAAD+/wIAAgALAAMAAAD9/wIAAgAGAAIAAAD8/wIAAgAJAAIAAAD8/wMAAgAJAAMAAAD9/wMAAgALAAMAAAD7/wIAAgAJAAIAAAD7/wMAAgAJAAMAAAD6/wMAAgAJAAMAAAD5/wMAAgAJAAMAAAD5/wIAAgAJAAIAAAD6/wEAAgAJAAIAAAD7/wEAAgAJAAIAAAD8/wEAAgAJAAIAAAD6/wIAAgAJAAIAAAD5/wEAAgAJAAIAAAD6/wAAAgAGAAEAAAD7/wAAAgAKAAAAAAD8/wAAAgAKAAAAAAD9/wAAAgALAAAAAAD5/wAAAgAJAAIAAAD4/wAAAgAIAAEAAAD4////AgAIAAAAAAD5////AgAKAAAAAAD6////AgALAAAAAAD4/wEAAgAIAAEAAAD4/wIAAgAIAAEAAAD4/wMAAgAIAAMAAAA=")
 
-[node name="Elevation2Layer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("4_w6j1j")
+[node name="Elevation2Layer" parent="." instance=ExtResource("5_omogb")]
+tile_map_data = PackedByteArray("AAD6/wEAAgAGAAEAAAD5/wEAAgAIAAEAAAD5/wIAAgAIAAMAAAD6/wIAAgAJAAMAAAD7/wIAAgAJAAMAAAD7/wEAAgAKAAAAAAD5/wAAAgAIAAAAAAD6/wAAAgALAAAAAAD8/wIAAgALAAMAAAD8/wEAAgALAAAAAAA=")
 
-[node name="Elevation3Layer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("4_w6j1j")
+[node name="Elevation3Layer" parent="." instance=ExtResource("5_omogb")]
 
-[node name="Elevation4Layer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("4_w6j1j")
+[node name="Elevation4Layer" parent="." instance=ExtResource("5_omogb")]
 
-[node name="Elevation5Layer" type="TileMapLayer" parent="."]
-tile_set = ExtResource("4_w6j1j")
+[node name="Elevation5Layer" parent="." instance=ExtResource("5_omogb")]
 
 [node name="ObjectLayer" type="TileMapLayer" parent="."]
 
-[node name="Player" parent="." instance=ExtResource("3_41wxt")]
+[node name="Player" parent="." node_paths=PackedStringArray("TileMapLayers") instance=ExtResource("3_41wxt")]
+TileMapLayers = [NodePath("../Elevation1Layer"), NodePath("../Elevation2Layer"), NodePath("../Elevation3Layer"), NodePath("../Elevation4Layer"), NodePath("../Elevation5Layer")]
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(2, 2)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
-remote_path = NodePath("../../Camera2D")
-
-[node name="Camera2D" type="Camera2D" parent="."]
+remote_path = NodePath("../Camera2D")

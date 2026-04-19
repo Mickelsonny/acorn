@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://t6baixyq274i"
-path="res://.godot/imported/beach_ground_tileset.png-cd4b243eb7d133e0711f9e3061bac010.ctex"
+uid="uid://dc8hf7m3mhg3i"
+path="res://.godot/imported/mesa_ground_tileset.png-a73ae74738d7967997b6e42cd18f93c3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/beach_ground_tileset.png"
-dest_files=["res://.godot/imported/beach_ground_tileset.png-cd4b243eb7d133e0711f9e3061bac010.ctex"]
+source_file="res://assets/tilesets/ground/mesa_ground_tileset.png"
+dest_files=["res://.godot/imported/mesa_ground_tileset.png-a73ae74738d7967997b6e42cd18f93c3.ctex"]
 
 [params]
 

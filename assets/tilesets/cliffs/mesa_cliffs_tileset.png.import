@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://br7tckjpondfo"
-path="res://.godot/imported/grass_cliffs_tileset.png-f4edf2efcd3b8a29dd8ae3a890032de1.ctex"
+uid="uid://5rie11cd8kvp"
+path="res://.godot/imported/mesa_cliffs_tileset.png-b9cccce84d7f87b2ab3526a5229c8b45.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/grass_cliffs_tileset.png"
-dest_files=["res://.godot/imported/grass_cliffs_tileset.png-f4edf2efcd3b8a29dd8ae3a890032de1.ctex"]
+source_file="res://assets/tilesets/cliffs/mesa_cliffs_tileset.png"
+dest_files=["res://.godot/imported/mesa_cliffs_tileset.png-b9cccce84d7f87b2ab3526a5229c8b45.ctex"]
 
 [params]
 

@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dctaddyxjqmo2"]
 
-[ext_resource type="Texture2D" uid="uid://bjlc55p6jek8x" path="res://assets/tilesets/ocean_all_tileset.png" id="1_1mjsc"]
+[ext_resource type="Texture2D" uid="uid://bjlc55p6jek8x" path="res://assets/tilesets/ocean/ocean_all_tileset.png" id="1_1mjsc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ovnor"]
 texture = ExtResource("1_1mjsc")
@@ -13,6 +13,7 @@ texture = ExtResource("1_1mjsc")
 0:0/animation_frame_6/duration = 0.1
 0:0/animation_frame_7/duration = 0.1
 0:0/0 = 0
+0:0/0/modulate = Color(1, 1, 1, 0.7058824)
 
 [resource]
 sources/0 = SubResource("TileSetAtlasSource_ovnor")

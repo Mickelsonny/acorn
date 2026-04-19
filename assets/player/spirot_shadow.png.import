@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmvk7hs1aaqqg"
-path="res://.godot/imported/ocean_tileset.png-75e94321653686a6a2d370ac17f788f3.ctex"
+uid="uid://16ig0kdmlo17"
+path="res://.godot/imported/spirot_shadow.png-4fb8d6264c8cbf66367048259e4903c6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/ocean_tileset.png"
-dest_files=["res://.godot/imported/ocean_tileset.png-75e94321653686a6a2d370ac17f788f3.ctex"]
+source_file="res://assets/player/spirot_shadow.png"
+dest_files=["res://.godot/imported/spirot_shadow.png-4fb8d6264c8cbf66367048259e4903c6.ctex"]
 
 [params]
 

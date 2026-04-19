@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bjlc55p6jek8x"
-path="res://.godot/imported/ocean_all_tileset.png-e64286a5c388695690b7f91c448a4382.ctex"
+path="res://.godot/imported/ocean_all_tileset.png-c1ac79da2a684ac0f6eec6a920cf7ee3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesets/ocean_all_tileset.png"
-dest_files=["res://.godot/imported/ocean_all_tileset.png-e64286a5c388695690b7f91c448a4382.ctex"]
+source_file="res://assets/tilesets/ocean/ocean_all_tileset.png"
+dest_files=["res://.godot/imported/ocean_all_tileset.png-c1ac79da2a684ac0f6eec6a920cf7ee3.ctex"]
 
 [params]
 

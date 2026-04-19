@@ -7,40 +7,45 @@ const MesaBiome = preload("res://biomes/mesa_biome.gd")
 const OceanBiome = preload("res://biomes/ocean_biome.gd")
 const BiomeObjectPlacer = preload("res://object_placement.gd")
 
-# Bounding map & world variables
-@export var map_width = 200
-@export var map_height = 200
-@export var world_seed = 0
-
-# TODO: Find better values for larger sized maps
-# Arbitrary values to input into noise generator
-# Biome generation
-@export var temperature_period: float = 150.0
-@export var moisture_period: float = 150.0
-@export var altitude_period: float = 120.0
-@export var temperature_octaves: int = 6
-@export var moisture_octaves: int = 6
-@export var altitude_octaves: int = 8
-
-# Elevation generation
-@export var elevation_base_period: float = 120.0
-@export var elevation_detail_period: float = 60.0
-@export var elevation_base_octaves: int = 6
-@export var elevation_detail_octaves: int = 8
-@export var elevation_detail_strength: float = 0.5
-@export var elevation_smoothing_passes: int = 4
-
 # TileMapLayer nodes
+@onready var underwaterLayers: Array[TileMapLayer] = [
+	$Underwater1Layer,
+	$Underwater2Layer,
+	$Underwater3Layer
+]
 @onready var oceanLayer = $OceanLayer
 @onready var groundLayer = $GroundLayer
-@onready var objectLayer = $ObjectLayer
 @onready var elevationLayers: Array[TileMapLayer] = [
 	$Elevation1Layer,
 	$Elevation2Layer,
 	$Elevation3Layer,
 	$Elevation4Layer,
-	$Elevation5Layer,
+	$Elevation5Layer
 ]
+@onready var objectLayer = $ObjectLayer
+
+# Bounding map & world variables
+@export var map_width = 100
+@export var map_height = 100
+@export var world_seed = 0
+
+# TODO: Find better values for larger sized maps
+# Arbitrary values to input into noise generator
+# Biome generation
+var temperature_period: float = 150.0
+var moisture_period: float = 150.0
+var altitude_period: float = 120.0
+var temperature_octaves: int = 6
+var moisture_octaves: int = 6
+var altitude_octaves: int = 8
+
+# Elevation generation
+var elevation_base_period: float = 120.0
+var elevation_detail_period: float = 60.0
+var elevation_base_octaves: int = 6
+var elevation_detail_octaves: int = 8
+var elevation_detail_strength: float = 0.5
+var elevation_smoothing_passes: int = 4
 
 var temperature = {}
 var moisture = {}
@@ -114,21 +119,22 @@ func generate_map(period, octave, seed_offset: int = 0):
 	
 	return gridName
 
+# TODO: Improve ranges to be more fitting (and hopefully get rid of certain autotiling errors because of grass prioritization across 3+ biomes)
 # Biome generation which is a function of altitude, temperature, and moisture
 func get_biome(alt, temp, moist):
-	if alt < 0.3:
+	if alt < 0.325:
 		return "Ocean"
 	elif alt < 0.35:
 		return "Beach"
-	elif alt >= 0.75:
+	elif alt >= 0.7:
 		return "Tundra"
 
 	if moist < 0.4:
-		if temp <= 0.55:
+		if temp <= 0.6:
 			return "Grass"
 		return "Mesa"
 	elif moist < 0.9:
-		if temp <= 0.55:
+		if temp <= 0.6:
 			return "Grass"
 		return "Mesa"
 	else:
@@ -273,9 +279,6 @@ func generate_elevation_map(biome_cells: Dictionary) -> void:
 
 # Paint elevation layers based on the generated elevation map
 func paint_elevation_layers(biome_cells: Dictionary) -> void:
-	for layer in elevationLayers:
-		layer.clear()
-
 	for biome_name in LAND_BIOMES:
 		var cells: Array = biome_cells.get(biome_name)
 		if cells.is_empty():
@@ -329,6 +332,34 @@ func compute_biome_cells() -> Dictionary:
 
 	return biome_cells
 
+# Function to paint underwater tiles on underwaterLayers | 3 total layers to create a divot
+func paint_underwater_tiles(biome_cells: Dictionary) -> void:
+	var ocean_cells: Array = biome_cells.get("Ocean")
+	var underwater1Layer = underwaterLayers[0]
+	var underwater2Layer = underwaterLayers[1]
+	var underwater3Layer = underwaterLayers[2]
+
+	# Underwater3Layer
+	var layer3_cells: Array = ocean_cells
+	underwater3Layer.set_cells_terrain_connect(layer3_cells, 0, 0, false)
+	underwater3Layer.set_cells_terrain_connect(expand_cells_with_border(ocean_cells, -2), 0, -1, false)
+
+	# Underwater2Layer
+	var layer2_cells: Array = expand_cells_with_border(ocean_cells, -1)
+	underwater2Layer.set_cells_terrain_connect(layer2_cells, 0, 0, false)
+	underwater2Layer.set_cells_terrain_connect(expand_cells_with_border(ocean_cells, -4), 0, -1, false)
+
+	# Underwater1Layer
+	var layer1_cells: Array = expand_cells_with_border(ocean_cells, -3)
+	underwater1Layer.set_cells_terrain_connect(layer1_cells, 0, 0, false)
+
+# Function to paint "real" ocean tiles on oceanLayer
+func paint_ocean_tiles(biome_cells: Dictionary) -> void:
+	var ocean_cells: Array = biome_cells.get("Ocean")
+
+	for pos in ocean_cells:
+		oceanLayer.set_cell(pos, 0, Vector2i(0, 0))
+
 # Function to paint the terrain of all biomes on groundLayer using autotiling for terrain connection
 func paint_normal_tiles(biome_cells: Dictionary) -> void:
 	# Paint "ghost" ocean tiles on groundLayer to properly autotile the beach/ocean transition
@@ -356,16 +387,9 @@ func paint_normal_tiles(biome_cells: Dictionary) -> void:
 
 		groundLayer.set_cells_terrain_connect(expanded_cells, 0, terrain, false)
 
-# Function to paint ocean tiles on oceanLayer and erase the "ghost" ocean tiles on groundLayer 
-func paint_ocean_tiles(biome_cells: Dictionary) -> void:
-	var ocean_cells: Array = biome_cells.get("Ocean")
-
-	# Shrunk by 1 tile to not destroy the beach/ocean transition tiles
+	# Erase the "ghost" ocean tiles; shrunk by 1 tile to not destroy the beach/ocean transition tiles
 	for pos in expand_cells_with_border(ocean_cells, -1):
 		groundLayer.erase_cell(pos)
-
-	for pos in ocean_cells:
-		oceanLayer.set_cell(pos, 0, Vector2i(0, 0))
 
 # Function to generate and paint the elevation layers that are above groundLayer
 func paint_elevation_tiles(biome_cells: Dictionary) -> void:
@@ -373,6 +397,8 @@ func paint_elevation_tiles(biome_cells: Dictionary) -> void:
 	paint_elevation_layers(biome_cells)
 
 func set_tile():
+	for layer in underwaterLayers:
+		layer.clear()
 	oceanLayer.clear()
 	groundLayer.clear()
 	for layer in elevationLayers:
@@ -380,17 +406,13 @@ func set_tile():
 
 	var biome_cells = compute_biome_cells()
 
-	paint_normal_tiles(biome_cells)
+	paint_underwater_tiles(biome_cells)
 	paint_ocean_tiles(biome_cells)
+	paint_normal_tiles(biome_cells)
 	paint_elevation_tiles(biome_cells)
 
 func scatter_biome_objects() -> void:
 	BiomeObjectPlacer.scatter_biome_objects(objectLayer, map_width, map_height, map_origin, biome, BIOME_OBJECTS, randomNumberGenerator)
-
-# Helper function to better visualize the procedurally generated world when pressing space bar/enter
-func _input(event):
-	if event.is_action_pressed("ui_accept"):
-		get_tree().reload_current_scene()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -406,7 +428,7 @@ func _ready() -> void:
 	moisture = generate_map(moisture_period, moisture_octaves)
 	altitude = generate_map(altitude_period, altitude_octaves)
 	
-	set_tile()
+	# set_tile()
 
 	# TODO: Improve object sprites and potentially implement a more robust system for object placement that can handle larger objects and more complex rules 
 	# (e.g., proximity to other objects, specific biome requirements, etc.)
