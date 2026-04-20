@@ -2,8 +2,8 @@ extends TileMapLayer
 
 var _3d_layer: int = 0
 
-var brightness_base: float = 0.75
-var brightness_fade_step: float = 0.15
+var brightness_base: float = 0.95
+var brightness_fade_step: float = 0.05
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

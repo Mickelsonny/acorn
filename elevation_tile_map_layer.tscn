@@ -3,7 +3,7 @@
 [ext_resource type="TileSet" uid="uid://da3qgwuwwr7sm" path="res://tiles/cliff_terrains.tres" id="1_5kgtd"]
 [ext_resource type="Script" uid="uid://csoo3t6a55f2b" path="res://elevation_tile_map_layer.gd" id="2_irs3f"]
 
-[node name="Elevation1Layer" type="TileMapLayer"]
+[node name="TileMapLayer" type="TileMapLayer"]
 tile_set = ExtResource("1_5kgtd")
 collision_enabled = false
 script = ExtResource("2_irs3f")

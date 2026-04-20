@@ -4,8 +4,8 @@ extends CharacterBody2D
 @onready var sprite: Sprite2D = $Character
 @onready var shadow: Sprite2D = $Shadow
 
-@export var speed: float = 64.0
-@export var sprint_multiplier: float = 1.5
+@export var speed: float = 48.0
+@export var sprint_multiplier: float = 1.25
 @export var animation_tree: AnimationTree 
 @export var animation_player: AnimationPlayer
 @export var TileMapLayers: Array[TileMapLayer]
@@ -22,12 +22,11 @@ var z_height: float = 0.0
 var z_height_extra: float = 0.0
 var z_velocity: float = 0.0
 
-const tile_atlas_coords_ignore: Array[Vector2i] = [Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), 
-Vector2i(3, 2), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4), Vector2i(5, 3), 
-Vector2i(6, 3), Vector2i(8, 3), Vector2i(9, 3), Vector2i(11, 3)]
+# The tileset I'm using doesn't have individual wall tile(s), so the array is empty
+const tile_atlas_coords_ignore: Array[Vector2i] = []
 var y_pos_walltile_for_falling: float = 0.0
 
-var sprite_fall_speed: float = 15.0
+var sprite_fall_speed: float = 16.0
 var shadow_scale_speed: float = 30.0
 
 var input: Vector2
@@ -49,13 +48,13 @@ func _physics_process(delta: float) -> void:
 	# Respective -x, +x, -y, +y
 	input = Input.get_vector("left", "right", "up", "down")
 	
-	# Check if sprinting (holding down shift) 
-	# Check if standing still to avoid speeding up idle animation 
+	# Check if sprinting (holding down shift) and not standing still to avoid speeding up idle animation 
 	var sprinting := Input.is_action_pressed("sprint") and input != Vector2.ZERO
 	move_multiplier = sprint_multiplier if sprinting else 1.0
 	velocity = input * speed * move_multiplier
 
 	# Jumping and falling logic: https://www.youtube.com/watch?v=evnCIOZp2os
+
 	# Note: Ensure that move_and_slide() and all jump logic is called after the fall logic
 	# This is to make sure that Spirot's horizontal position changing from move_and_slide()
 	# Isn't fighting against the fall logic repositioning Spirot
@@ -65,8 +64,8 @@ func _physics_process(delta: float) -> void:
 		_fall_logic(tile_below)
 		return
 	
-	# Jump input is "ui_accept"
-	if !is_jumping and Input.is_action_just_pressed("ui_accept"):
+	# Jump input is pressing space
+	if !is_jumping and Input.is_action_just_pressed("jump"):
 		if _can_jump():
 			current_layer += 1
 			z_velocity = JUMP_FORCE
@@ -91,13 +90,9 @@ func _physics_process(delta: float) -> void:
 		previous_layer = current_layer
 	
 	move_and_slide()
-	
-	select_animation()
-	update_animation_parameters()
-	update_animation_speed()
 
 	# Shadow scaling to emulate 3D feel
-	var shadow_scale_factor: float = clamp(1.0 - (z_height * 0.015), 0.1, 1.0)
+	var shadow_scale_factor: float = clamp(1.0 - (z_height * 0.02), 0.1, 1.0)
 	var shadow_scale_weight: float = 1.0 - exp(-(shadow_scale_speed) * delta)
 	shadow.scale = lerp(shadow.scale, Vector2.ONE * shadow_scale_factor, shadow_scale_weight)
 
@@ -105,6 +100,10 @@ func _physics_process(delta: float) -> void:
 	var z_height_extra_weight: float = 1.0 - exp(-(sprite_fall_speed) * delta)
 	z_height_extra = lerp(z_height_extra, 0.0, z_height_extra_weight)
 	sprite.position.y = -z_height - z_height_extra
+	
+	select_animation()
+	update_animation_parameters()
+	update_animation_speed()
 
 func select_animation():
 	if velocity == Vector2.ZERO:
