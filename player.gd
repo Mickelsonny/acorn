@@ -191,11 +191,16 @@ func _is_tile_below_empty() -> int:
 	
 	var half_width_x: float = $CollisionShape2D.shape.size.x / 2.0
 	var half_width_y: float = $CollisionShape2D.shape.size.y / 2.0
+
 	var pos_offset: Array[Vector2] = [
-		Vector2(-half_width_x, half_width_y), Vector2(half_width_x, half_width_y),
+		Vector2(-half_width_x,  half_width_y), # bottom-left tile
+		Vector2( half_width_x,  half_width_y), # bottom-right tile
+		Vector2(-half_width_x, -half_width_y), # top-left tile
+		Vector2( half_width_x, -half_width_y), # top-right tile
 	]
 	
 	var should_fall_and_change_y_pos: bool = false
+	var solid_corner_count: int = 0
 	
 	for i in pos_offset:
 		var current_pos: Vector2 = $CollisionShape2D.global_position + i
@@ -219,8 +224,9 @@ func _is_tile_below_empty() -> int:
 
 					# Stuck in a wall on a higher layer
 					return 3
+					
 				# Solid floor
-				return -1
+				solid_corner_count += 1
 		else:
 			var higher_layer_atlas_coords: Vector2i = Vector2i.ZERO
 			if higher_layer_tilemap:
@@ -231,6 +237,11 @@ func _is_tile_below_empty() -> int:
 
 				# Same thing as above
 				return 3
+
+	# Grounded only if more than half the corners are on solid tiles
+	if solid_corner_count > pos_offset.size() / 2.0:
+		return -1
+	
 	if should_fall_and_change_y_pos:
 		# On a wall on the current layer
 		return 2
