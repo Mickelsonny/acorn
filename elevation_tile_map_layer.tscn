@@ -5,5 +5,4 @@
 
 [node name="TileMapLayer" type="TileMapLayer"]
 tile_set = ExtResource("1_5kgtd")
-collision_enabled = false
 script = ExtResource("2_irs3f")
