@@ -5,16 +5,16 @@ extends CharacterBody2D
 @onready var shadow: Sprite2D = $Shadow
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
-@export var speed: float = 48.0
-@export var sprint_multiplier: float = 1.25
-@export var fall_multiplier: float = 0.75
+@export var speed: float = 36.0
+@export var sprint_multiplier: float = 1.2
+@export var fall_multiplier: float = 0.8
 @export var animation_tree: AnimationTree 
 @export var animation_player: AnimationPlayer
 @export var TileMapLayers: Array[TileMapLayer]
 
 const TILE_SIZE: int = 16
-const JUMP_FORCE: float = 60.0
-const GRAVITY: float = -170.0
+const JUMP_FORCE: float = 50.0
+const GRAVITY: float = -180.0
 
 var is_jumping: bool = false
 var current_layer: int = 0
@@ -85,6 +85,12 @@ func _physics_process(delta: float) -> void:
 		z_velocity = 0.0
 	
 	move_and_slide()
+
+	# Keep current layer derived from occupied space while *NOT JUMPING*
+	if not is_jumping:
+		current_layer = _get_highest_layer_at_world_position(collision_shape.global_position)
+		falling = false
+
 	_check_elevation_layer_collisions()
 
 	# Emulating 3D feel:
@@ -165,9 +171,7 @@ func jump_logic(delta: float) -> void:
 	z_height = max(0.0, z_height + (z_velocity * delta))
 	
 	if z_height == 0 and z_velocity < 0.0:
-		current_layer = _get_highest_layer_at_world_position(collision_shape.global_position)
 		_set_jump_collisions(false)
-		falling = false
 		is_jumping = false
 
 func _start_jump(is_fall: bool) -> void:
@@ -201,18 +205,20 @@ func _can_auto_jump(elevation_layer: TileMapLayer, collision: KinematicCollision
 	# Not a different elevation layer (e.g., WALL collision)
 	if collided_layer_number != current_layer:
 		return false
-	
-	var movement_dir: Vector2 = intended_movement_dir
+
+	# Ignore when there's no intended movement input
+	if intended_movement_dir == Vector2.ZERO:
+		return false
 	
 	# Ignore grazing collisions
-	if collision.get_normal().dot(movement_dir) > -0.2:
+	if collision.get_normal().dot(intended_movement_dir) > -0.5:
 		return false
 
-	# If 1.5x tile(s) ahead is the elevation layer below the current layer, auto-jump to fall is allowed
-	var one_tile_ahead: Vector2 = collision_shape.global_position + (movement_dir * TILE_SIZE * 1.5)
-	var forward_layer: int = _get_highest_layer_at_world_position(one_tile_ahead)
+	# If 1.5 tile(s) ahead is the elevation layer below the current layer, auto-jump to fall is allowed
+	var tiles_ahead: Vector2 = collision_shape.global_position + (intended_movement_dir * TILE_SIZE * 1.5)
+	var forward_layer: int = _get_highest_layer_at_world_position(tiles_ahead)
 
-	if forward_layer + 1== current_layer:
+	if forward_layer + 1 == current_layer:
 		return true
 	else:
 		return false
