@@ -5,9 +5,9 @@ extends CharacterBody2D
 @onready var shadow: Sprite2D = $Shadow
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
-@export var speed: float = 36.0
-@export var sprint_multiplier: float = 1.2
-@export var fall_multiplier: float = 0.8
+@export var speed: float = 40.0
+@export var sprint_multiplier: float = 1.4
+@export var fall_multiplier: float = 0.7
 @export var animation_tree: AnimationTree 
 @export var animation_player: AnimationPlayer
 @export var TileMapLayers: Array[TileMapLayer]
@@ -214,8 +214,8 @@ func _can_auto_jump(elevation_layer: TileMapLayer, collision: KinematicCollision
 	if collision.get_normal().dot(intended_movement_dir) > -0.5:
 		return false
 
-	# If 1.5 tile(s) ahead is the elevation layer below the current layer, auto-jump to fall is allowed
-	var tiles_ahead: Vector2 = collision_shape.global_position + (intended_movement_dir * TILE_SIZE * 1.5)
+	# If 1.2 tile(s) ahead is the elevation layer below the current layer, auto-jump to fall is allowed
+	var tiles_ahead: Vector2 = collision_shape.global_position + (intended_movement_dir * TILE_SIZE * 1.2)
 	var forward_layer: int = _get_highest_layer_at_world_position(tiles_ahead)
 
 	if forward_layer + 1 == current_layer:
