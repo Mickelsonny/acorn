@@ -7,12 +7,13 @@ extends CharacterBody2D
 
 @export var speed: float = 48.0
 @export var sprint_multiplier: float = 1.25
+@export var fall_multiplier: float = 0.75
 @export var animation_tree: AnimationTree 
 @export var animation_player: AnimationPlayer
 @export var TileMapLayers: Array[TileMapLayer]
 
 const TILE_SIZE: int = 16
-const JUMP_FORCE: float = 50.0
+const JUMP_FORCE: float = 60.0
 const GRAVITY: float = -170.0
 
 var is_jumping: bool = false
@@ -22,7 +23,10 @@ var z_height: float = 0.0
 var z_height_extra: float = 0.0
 var z_velocity: float = 0.0
 
-var sprite_fall_speed: float = 15.0
+var intended_movement_dir: Vector2 = Vector2.ZERO
+var falling: bool = false
+
+var sprite_fall_speed: float = 20.0
 var shadow_scale_speed: float = 30.0
 
 var input: Vector2
@@ -34,8 +38,9 @@ func _ready():
 	# (1) Animation playback reference
 	playback = animation_tree["parameters/playback"]
 
-	# (2) Keep all elevation layers collidable until a jump occurs
+	# (2) Keep all elevation layers collidable until a jump occurs & support spawns above groundLayer
 	_set_jump_collisions(false)
+	current_layer = _get_highest_layer_at_world_position(collision_shape.global_position)
 	
 	# (3) TileMapLayers' z-index based on their order in the TileMapLayers array
 	for i in TileMapLayers.size():
@@ -48,17 +53,30 @@ func _ready():
 func _physics_process(delta: float) -> void:
 	# Respective -x, +x, -y, +y
 	input = Input.get_vector("left", "right", "up", "down")
+
+	# Record the intended movement direction for auto-jump checks
+	if input != Vector2.ZERO:
+		intended_movement_dir = input.normalized()
+	else:
+		intended_movement_dir = Vector2.ZERO
 	
-	# Check (1) if holding down shift and (2) not standing still to avoid speeding up idle animation 
+	# Passes (1) if holding down shift and (2) not standing still
 	var sprinting := Input.is_action_pressed("sprint") and input != Vector2.ZERO
-	move_multiplier = sprint_multiplier if sprinting else 1.0
+
+	var sprint_speed_multiplier: float = 1.0
+	if sprinting:
+		sprint_speed_multiplier = sprint_multiplier
+
+	var fall_speed_multiplier: float = 1.0
+	if falling and is_jumping:
+		fall_speed_multiplier = fall_multiplier
+
+	move_multiplier = sprint_speed_multiplier * fall_speed_multiplier
 	velocity = input * speed * move_multiplier
 	
 	# Top-down jumping (without falling) logic inspired by: https://www.youtube.com/watch?v=evnCIOZp2os
 	if !is_jumping and Input.is_action_just_pressed("jump"):
-		_set_jump_collisions(true)
-		z_velocity = JUMP_FORCE
-		is_jumping = true
+		_start_jump(false)
 	
 	if is_jumping:
 		jump_logic(delta)
@@ -67,6 +85,7 @@ func _physics_process(delta: float) -> void:
 		z_velocity = 0.0
 	
 	move_and_slide()
+	_check_elevation_layer_collisions()
 
 	# Emulating 3D feel:
 	# (1) Shadow scaling
@@ -125,17 +144,17 @@ func _set_jump_collisions(enabled: bool) -> void:
 			keep_collisions = not (layer_number <= current_layer or layer_number == current_layer + 1)
 		TileMapLayers[i].collision_enabled = keep_collisions
 
-func _get_highest_layer_under_player() -> int:
+func _get_highest_layer_at_world_position(world_pos: Vector2) -> int:
 	var pos_offset: Array[Vector2] = _get_collision_circle()
 
-	# Check each layer from top to bottom for any tiles under the Spirot's collision circle
+	# Check each layer from top to bottom for any tiles under the collision circle given the provided world position
 	# Returns the highest layer index found (1-based) or 0 if none found
 	for layer_index in range(TileMapLayers.size() - 1, -1, -1):
 		var tilemap: TileMapLayer = TileMapLayers[layer_index]
 		for offset in pos_offset:
-			var current_pos: Vector2 = collision_shape.global_position + offset
-			var current_tile_pos: Vector2 = tilemap.local_to_map(current_pos)
-			var tile_data: TileData = tilemap.get_cell_tile_data(current_tile_pos)
+			var arg_world_pos: Vector2 = world_pos + offset
+			var arg_tile_pos: Vector2 = tilemap.local_to_map(arg_world_pos)
+			var tile_data: TileData = tilemap.get_cell_tile_data(arg_tile_pos)
 			if tile_data:
 				return layer_index + 1
 
@@ -146,6 +165,54 @@ func jump_logic(delta: float) -> void:
 	z_height = max(0.0, z_height + (z_velocity * delta))
 	
 	if z_height == 0 and z_velocity < 0.0:
-		current_layer = _get_highest_layer_under_player()
+		current_layer = _get_highest_layer_at_world_position(collision_shape.global_position)
 		_set_jump_collisions(false)
+		falling = false
 		is_jumping = false
+
+func _start_jump(is_fall: bool) -> void:
+	_set_jump_collisions(true)
+	z_velocity = JUMP_FORCE
+	is_jumping = true
+	falling = is_fall
+
+func _check_elevation_layer_collisions() -> void:
+	for i in get_slide_collision_count():
+		var collision: KinematicCollision2D = get_slide_collision(i)
+		var collider := collision.get_collider()
+		if collider is TileMapLayer and TileMapLayers.has(collider):
+			on_elevation_layer_collision(collider, collision)
+
+# Auto-jump at ledge to fall
+func on_elevation_layer_collision(elevation_layer: TileMapLayer, collision: KinematicCollision2D) -> void:
+	if not _can_auto_jump(elevation_layer, collision):
+		return
+
+	_start_jump(true)
+
+func _can_auto_jump(elevation_layer: TileMapLayer, collision: KinematicCollision2D) -> bool:
+	# Don't spam jumps if the player is already jumping
+	if is_jumping:
+		return false
+	
+	var collided_layer_number: int = TileMapLayers.find(elevation_layer) + 1
+
+	# Ensure the collided layer is the current elevation layer (LEDGE collision)
+	# Not a different elevation layer (e.g., WALL collision)
+	if collided_layer_number != current_layer:
+		return false
+	
+	var movement_dir: Vector2 = intended_movement_dir
+	
+	# Ignore grazing collisions
+	if collision.get_normal().dot(movement_dir) > -0.2:
+		return false
+
+	# If 1.5x tile(s) ahead is the elevation layer below the current layer, auto-jump to fall is allowed
+	var one_tile_ahead: Vector2 = collision_shape.global_position + (movement_dir * TILE_SIZE * 1.5)
+	var forward_layer: int = _get_highest_layer_at_world_position(one_tile_ahead)
+
+	if forward_layer + 1== current_layer:
+		return true
+	else:
+		return false
