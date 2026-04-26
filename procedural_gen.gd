@@ -33,16 +33,16 @@ const ObjectPlacer = preload("res://object_placement.gd")
 # Biome generation
 var temperature_period: float = 200.0
 var moisture_period: float = 200.0
-var altitude_period: float = 150.0
-var temperature_octaves: int = 4
-var moisture_octaves: int = 4
-var altitude_octaves: int = 4
+var altitude_period: float = 100.0
+var temperature_octaves: int = 3
+var moisture_octaves: int = 3
+var altitude_octaves: int = 3
 
 # Elevation generation
 var elevation_base_period: float = 70.0
-var elevation_detail_period: float = 30.0
+var elevation_detail_period: float = 25.0
 var elevation_base_octaves: int = 8
-var elevation_detail_octaves: int = 8
+var elevation_detail_octaves: int = 10
 
 var temperature = {}
 var moisture = {}
@@ -115,9 +115,9 @@ func get_maps() -> void:
 
 # Biome generation which is a function of altitude, temperature, and moisture
 func get_biome(alt, temp, moist):
-	if alt < 0.3:
+	if alt < 0.275:
 		return "Ocean"
-	elif alt < 0.325:
+	elif alt < 0.3:
 		return "Beach"
 	elif alt >= 0.65:
 		return "Tundra"
