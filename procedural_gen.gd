@@ -1,11 +1,6 @@
 extends Node2D
 
-const BeachBiome = preload("res://biomes/beach_biome.gd")
-const GrassBiome = preload("res://biomes/grass_biome.gd")
-const TundraBiome = preload("res://biomes/tundra_biome.gd")
-const MesaBiome = preload("res://biomes/mesa_biome.gd")
-const OceanBiome = preload("res://biomes/ocean_biome.gd")
-const ObjectPlacer = preload("res://object_placement.gd")
+const treeHandler = preload("res://scripts/tree_handler.gd")
 
 # TileMapLayer nodes
 @onready var underwaterLayers: Array[TileMapLayer] = [
@@ -55,39 +50,13 @@ var randomNumberGenerator = RandomNumberGenerator.new()
 
 var map_origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
 
-var BIOME_DEFINITIONS = {}
-var BIOME_OBJECTS = {}
-var BIOME_TERRAINS = {}
-
-func initialize_biomes() -> void:
-	BIOME_DEFINITIONS = {
-		"Grass": {
-			"Terrain": 0,
-			"Objects": GrassBiome.OBJECTS,
-		},
-		"Tundra": {
-			"Terrain": 1,
-			"Objects": TundraBiome.OBJECTS,
-		},
-		"Mesa": {
-			"Terrain": 2,
-			"Objects": MesaBiome.OBJECTS,
-		},
-		"Beach": {
-			"Terrain": 3,
-			"Objects": BeachBiome.OBJECTS,
-		},
-		"Ocean": {
-			"Terrain": 4,
-			"Objects": OceanBiome.OBJECTS,
-		},
-	}
-	
-	for biome_name in BIOME_DEFINITIONS.keys():
-		var definition: Dictionary = BIOME_DEFINITIONS[biome_name]
-
-		BIOME_OBJECTS[biome_name] = definition.get("Objects")
-		BIOME_TERRAINS[biome_name] = int(definition.get("Terrain"))
+const BIOME_TERRAINS := {
+	"Grass": 0,
+	"Tundra": 1,
+	"Mesa": 2,
+	"Beach": 3,
+	"Ocean": 4,
+}
 
 func generate_map(period, octave, seed_offset: int = 0) -> Dictionary:
 	# Set the seed and parameters for FastNoiseLite
@@ -362,10 +331,6 @@ func set_tiles() -> void:
 	paint_land_tiles(biome_cells)
 	paint_elevation_tiles(biome_cells)
 
-func set_objects() -> void:
-	# ObjectPlacer.scatter_biome_objects(objectLayer, map_width, map_height, map_origin, biome, BIOME_OBJECTS, randomNumberGenerator)
-	pass
-
 func set_seeds() -> void:
 	if world_seed == 0:
 		randomize()
@@ -378,9 +343,8 @@ func set_seeds() -> void:
 func _ready() -> void:
 	set_seeds()
 
-	initialize_biomes()
-
 	get_maps()
 	
 	set_tiles()
-	set_objects()
+
+	# treeHandler.placeTrees()

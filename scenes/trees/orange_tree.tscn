@@ -1,0 +1,102 @@
+[gd_scene load_steps=15 format=3 uid="uid://c7jwojq8n5ve0"]
+
+[ext_resource type="Texture2D" uid="uid://b8e2i2enf303w" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Orange_Fruitless_Shake_16x16.png" id="1_q0qwy"]
+[ext_resource type="Texture2D" uid="uid://ct4pc4o3xdpim" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Orange_Ripe_Shake_16x16.png" id="2_l27wv"]
+[ext_resource type="Texture2D" uid="uid://boanlh1codja2" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Orange_Unripe_Shake_16x16.png" id="3_knxeb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_elp6d"]
+atlas = ExtResource("1_q0qwy")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0u2qs"]
+atlas = ExtResource("1_q0qwy")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lia5q"]
+atlas = ExtResource("1_q0qwy")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqlmt"]
+atlas = ExtResource("2_l27wv")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_drhnx"]
+atlas = ExtResource("2_l27wv")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u2li8"]
+atlas = ExtResource("2_l27wv")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ei8k0"]
+atlas = ExtResource("3_knxeb")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wh7fd"]
+atlas = ExtResource("3_knxeb")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ipygq"]
+atlas = ExtResource("3_knxeb")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4kpqp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_elp6d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0u2qs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lia5q")
+}],
+"loop": false,
+"name": &"fruitless",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqlmt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_drhnx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u2li8")
+}],
+"loop": false,
+"name": &"ripe",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ei8k0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wh7fd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ipygq")
+}],
+"loop": false,
+"name": &"unripe",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q0qwy"]
+size = Vector2(14, 9)
+
+[node name="OrangeTree" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4kpqp")
+animation = &"fruitless"
+offset = Vector2(0, -34)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_q0qwy")

@@ -46,9 +46,6 @@ func _ready():
 	for i in TileMapLayers.size():
 		TileMapLayers[i]._3d_layer = i + 1
 		TileMapLayers[i]._ready()
-	
-	# (4) Spirot's z-index (always on top)
-	z_index = 100
 
 func _physics_process(delta: float) -> void:
 	# Respective -x, +x, -y, +y

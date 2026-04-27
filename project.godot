@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
 
-WindowScaling="*res://window_scaling.gd"
+WindowScaling="*res://scripts/window_scaling.gd"
 
 [display]
 

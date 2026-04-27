@@ -1,5 +1,5 @@
+class_name TreeHandler
 extends RefCounted
-class_name ObjectPlacement
 
 # Function to pick one object by chance in the range [0, 100)
 static func pick_object_by_chance(biome_name: String, biome_objects: Dictionary, random_number_generator: RandomNumberGenerator) -> Dictionary:

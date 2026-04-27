@@ -1,3 +1,0 @@
-extends RefCounted
-
-const OBJECTS = []
