@@ -42,7 +42,7 @@ tile_set = ExtResource("2_41wxt")
 
 [node name="Elevation5Layer" parent="." instance=ExtResource("5_omogb")]
 
-[node name="ObjectLayer" type="TileMapLayer" parent="."]
+[node name="DecorLayer" type="TileMapLayer" parent="."]
 
 [node name="Player" parent="." node_paths=PackedStringArray("TileMapLayers") instance=ExtResource("3_41wxt")]
 TileMapLayers = [NodePath("../Elevation1Layer"), NodePath("../Elevation2Layer"), NodePath("../Elevation3Layer"), NodePath("../Elevation4Layer"), NodePath("../Elevation5Layer")]

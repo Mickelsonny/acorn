@@ -1,6 +1,6 @@
 extends Node2D
 
-const treeHandler = preload("res://scripts/tree_handler.gd")
+const treeHandler = preload("res://scripts/trees/tree_handler.gd")
 
 # TileMapLayer nodes
 @onready var underwaterLayers: Array[TileMapLayer] = [
@@ -17,11 +17,11 @@ const treeHandler = preload("res://scripts/tree_handler.gd")
 	$Elevation4Layer,
 	$Elevation5Layer
 ]
-@onready var objectLayer = $ObjectLayer
+@onready var decorLayer = $DecorLayer
 
 # Bounding map & world variables
-@export var map_width = 200
-@export var map_height = 200
+@export var map_width = 125
+@export var map_height = 125
 @export var world_seed = 0
 
 # Arbitrary values to input into noise generator

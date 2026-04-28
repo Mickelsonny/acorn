@@ -1,3 +1,3 @@
 # ACORN
 
-A natural selection agent-based model with differing biomes, species, habitats, etc. portrayed through pixel art.
+- Player and tree scene z-indexes are 10.

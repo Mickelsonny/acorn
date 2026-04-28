@@ -425,7 +425,8 @@ states/Walk/position = Vector2(502, 100)
 [sub_resource type="CircleShape2D" id="CircleShape2D_i3pqv"]
 radius = 3.5
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("animation_tree")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("animation_tree") groups=["player"]]
+z_index = 10
 script = ExtResource("1_onrkg")
 animation_tree = NodePath("AnimationTree")
 
@@ -450,5 +451,5 @@ parameters/Idle/blend_position = Vector2(0, 1)
 parameters/Walk/blend_position = Vector2(0, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-0.5, -2)
+position = Vector2(-0.5, -0.5)
 shape = SubResource("CircleShape2D_i3pqv")
