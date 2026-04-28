@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://dkfi71bd13gr0"]
+
+[ext_resource type="Script" uid="uid://cjky68r1jowd5" path="res://scripts/trees/regular_tree.gd" id="1_ilv25"]
+[ext_resource type="Texture2D" uid="uid://5rdd4ofvqjj6" path="res://assets/objects/grass/regular_trees/Trees_Birch_Green_Medium_Shake_16x16.png" id="2_ilv25"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jw2lw"]
+atlas = ExtResource("2_ilv25")
+region = Rect2(0, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jspfw"]
+atlas = ExtResource("2_ilv25")
+region = Rect2(48, 0, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rc8rs"]
+atlas = ExtResource("2_ilv25")
+region = Rect2(96, 0, 48, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jspfw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jw2lw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jspfw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rc8rs")
+}],
+"loop": false,
+"name": &"shake",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rc8rs"]
+size = Vector2(10, 6)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_q3tu3"]
+
+[node name="BirchGreenMediumTree" type="Node2D"]
+z_index = 10
+script = ExtResource("1_ilv25")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jspfw")
+animation = &"shake"
+offset = Vector2(2, -26)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_rc8rs")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_q3tu3")

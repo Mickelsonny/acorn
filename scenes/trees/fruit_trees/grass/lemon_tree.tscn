@@ -98,6 +98,8 @@ script = ExtResource("1_2u23m")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_4kpqp")
 animation = &"fruitless"
+frame = 2
+frame_progress = 1.0
 offset = Vector2(0, -34)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]

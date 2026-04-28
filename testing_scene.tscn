@@ -1,11 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://btj232axtu64c"]
+[gd_scene load_steps=2 format=3 uid="uid://btj232axtu64c"]
 
 [ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://scenes/player/player.tscn" id="1_uxw26"]
-[ext_resource type="PackedScene" uid="uid://lh8ylhhqu8xr" path="res://scenes/trees/banana_tree.tscn" id="2_00g8v"]
-[ext_resource type="PackedScene" uid="uid://b186rly165t0o" path="res://scenes/trees/lemon_tree.tscn" id="3_7yy31"]
-[ext_resource type="PackedScene" uid="uid://c7jwojq8n5ve0" path="res://scenes/trees/orange_tree.tscn" id="4_wlvp0"]
-[ext_resource type="PackedScene" uid="uid://bu50gvop0nfn" path="res://scenes/trees/peach_tree.tscn" id="5_kedo2"]
-[ext_resource type="PackedScene" uid="uid://cwlbvgq7m3rml" path="res://scenes/trees/apple_tree.tscn" id="6_7gby3"]
 
 [node name="Node2D" type="Node2D"]
 y_sort_enabled = true
@@ -16,18 +11,3 @@ y_sort_enabled = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player"]
 remote_path = NodePath("../Camera2D")
-
-[node name="BananaTree" parent="." instance=ExtResource("2_00g8v")]
-position = Vector2(43, 7)
-
-[node name="LemonTree" parent="." instance=ExtResource("3_7yy31")]
-position = Vector2(-38, -31)
-
-[node name="OrangeTree" parent="." instance=ExtResource("4_wlvp0")]
-position = Vector2(66, 21)
-
-[node name="PeachTree" parent="." instance=ExtResource("5_kedo2")]
-position = Vector2(-19, -49)
-
-[node name="AppleTree" parent="." instance=ExtResource("6_7gby3")]
-position = Vector2(-102, -17)
