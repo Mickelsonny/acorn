@@ -16,8 +16,8 @@ config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
 
-WindowScaling="*res://scripts/window_scaling.gd"
-CursorHandler="*res://scripts/cursor_handler.gd"
+WindowScaling="*res://misc/window_scaling.gd"
+CursorHandler="*res://misc/cursor_handler.gd"
 
 [display]
 

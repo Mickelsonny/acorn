@@ -7,3 +7,5 @@
 - Medium tree Area2D radius = 10.0 px / 12.5 px
 - Big tree Area2D radius = 12.5 px / 10.0 px
 - Huge tree Area2D radius = 15.0 px / 10.0 px
+
+Various pixel art assets from [LimeZu on itch.io](https://limezu.itch.io/)

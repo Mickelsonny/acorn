@@ -1,0 +1,112 @@
+[gd_scene load_steps=17 format=3 uid="uid://bu50gvop0nfn"]
+
+[ext_resource type="Texture2D" uid="uid://tl7xwr2qi488" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Peach_Fruitless_Shake_16x16.png" id="1_i3a35"]
+[ext_resource type="Texture2D" uid="uid://kt6y5cu0mdin" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Peach_Ripe_Shake_16x16.png" id="2_7i7r6"]
+[ext_resource type="Texture2D" uid="uid://bj7bhbyc7kckg" path="res://assets/objects/grass/fruit_trees/Fruit_Tree_Peach_Unripe_Shake_16x16.png" id="3_afsqu"]
+[ext_resource type="Script" uid="uid://c7u141wt8kko1" path="res://tree/scripts/fruit_tree.gd" id="4_7i7r6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_65dde"]
+atlas = ExtResource("1_i3a35")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vufa1"]
+atlas = ExtResource("1_i3a35")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovxcj"]
+atlas = ExtResource("1_i3a35")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cbanh"]
+atlas = ExtResource("2_7i7r6")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_415ay"]
+atlas = ExtResource("2_7i7r6")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvmap"]
+atlas = ExtResource("2_7i7r6")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kufp"]
+atlas = ExtResource("3_afsqu")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqssb"]
+atlas = ExtResource("3_afsqu")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mnivm"]
+atlas = ExtResource("3_afsqu")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4kpqp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_65dde")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vufa1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovxcj")
+}],
+"loop": false,
+"name": &"fruitless",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cbanh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_415ay")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvmap")
+}],
+"loop": false,
+"name": &"ripe",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0kufp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqssb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mnivm")
+}],
+"loop": false,
+"name": &"unripe",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i3a35"]
+size = Vector2(7, 7)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_i3a35"]
+
+[node name="PeachTree" type="Node2D"]
+z_index = 10
+script = ExtResource("4_7i7r6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4kpqp")
+animation = &"fruitless"
+offset = Vector2(0, -34)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-0.5, 1.5)
+shape = SubResource("RectangleShape2D_i3a35")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_i3a35")

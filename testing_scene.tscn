@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://btj232axtu64c"]
 
-[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://scenes/player/player.tscn" id="1_uxw26"]
+[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player/player.tscn" id="1_uxw26"]
 
 [node name="Node2D" type="Node2D"]
 y_sort_enabled = true

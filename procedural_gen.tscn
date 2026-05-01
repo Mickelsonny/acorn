@@ -4,14 +4,12 @@
 [ext_resource type="TileSet" uid="uid://d27qhqtqcpkmj" path="res://tiles/ground_terrains.tres" id="2_41wxt"]
 [ext_resource type="TileSet" uid="uid://dctaddyxjqmo2" path="res://tiles/ocean_tiles.tres" id="2_k5wtf"]
 [ext_resource type="TileSet" uid="uid://bys4ttfaj0eaw" path="res://tiles/underwater_terrains.tres" id="2_ovnor"]
-[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://scenes/player/player.tscn" id="3_41wxt"]
-[ext_resource type="PackedScene" uid="uid://b5na5mc2uer7h" path="res://scenes/elevation/elevation_tile_map_layer.tscn" id="5_omogb"]
+[ext_resource type="PackedScene" uid="uid://ddxm04kxuvot0" path="res://player/player.tscn" id="3_41wxt"]
+[ext_resource type="PackedScene" uid="uid://b5na5mc2uer7h" path="res://elevation/elevation_tile_map_layer.tscn" id="5_omogb"]
 
 [node name="ProceduralGen" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_tjmt1")
-map_width = 150
-map_height = 150
 
 [node name="Underwater1Layer" type="TileMapLayer" parent="."]
 z_index = -13

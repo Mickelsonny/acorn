@@ -1,6 +1,6 @@
 extends Node2D
 
-const treeHandler = preload("res://scripts/trees/tree_handler.gd")
+const TreeHandlerScript = preload("res://tree/scripts/tree_handler.gd")
 
 # TileMapLayer nodes
 @onready var underwaterLayers: Array[TileMapLayer] = [
@@ -20,11 +20,14 @@ const treeHandler = preload("res://scripts/trees/tree_handler.gd")
 @onready var decorLayer = $DecorLayer
 
 # Bounding map & world variables
-@export var map_width = 125
-@export var map_height = 125
-@export var world_seed = 0
+@export var map_width: int = 125
+@export var map_height: int = 125
+@export var map_origin: Vector2i = Vector2i(-(map_width >> 1), -(map_height >> 1))
+@export var world_seed: int
 
 # Arbitrary values to input into noise generator
+var fastNoiseLite = FastNoiseLite.new()
+
 # Biome generation
 var temperature_period: float = 200.0
 var moisture_period: float = 200.0
@@ -45,11 +48,7 @@ var altitude = {}
 var biome = {}
 var elevation = {}
 
-var fastNoiseLite = FastNoiseLite.new()
-var randomNumberGenerator = RandomNumberGenerator.new()
-
-var map_origin = Vector2i(-(map_width >> 1), -(map_height >> 1))
-
+var biome_cells = {}
 const BIOME_TERRAINS := {
 	"Grass": 0,
 	"Tundra": 1,
@@ -185,7 +184,7 @@ func resize_cells_with_border(cells: Array, border_size: int = 1) -> Array:
 	return expanded_lookup.keys()
 
 # Natural elevation generation using multi-layer noise approach from: https://www.youtube.com/shorts/rV99G-t8CYk
-func generate_elevation_map(biome_cells: Dictionary) -> void:
+func generate_elevation_map() -> void:
 	var base_noise = generate_map(elevation_base_period, elevation_base_octaves, 4444)
 	var detail_noise = generate_map(elevation_detail_period, elevation_detail_octaves, 5555)
 
@@ -205,7 +204,7 @@ func generate_elevation_map(biome_cells: Dictionary) -> void:
 			elevation[pos] = clampi(calculated_level, 1, 5)
 
 # Paint elevation layers based on the generated elevation map
-func paint_elevation_layers(biome_cells: Dictionary) -> void:
+func paint_elevation_layers() -> void:
 	for biome_name in ["Grass", "Tundra", "Mesa", "Beach"]:
 		var cells: Array = biome_cells.get(biome_name)
 		if cells.is_empty():
@@ -239,7 +238,7 @@ func paint_elevation_layers(biome_cells: Dictionary) -> void:
 
 # Function to compute the biome for every tile
 func compute_biome_cells() -> Dictionary:
-	var biome_cells = {}
+	var calculated_biome_cells = {}
 
 	for x in range(map_width):
 		for y in range(map_height):
@@ -252,14 +251,14 @@ func compute_biome_cells() -> Dictionary:
 			var biome_name = get_biome(alt, temp, moist)
 			biome[pos] = biome_name
 
-			if not biome_cells.has(biome_name):
-				biome_cells[biome_name] = []
-			biome_cells[biome_name].append(pos)
+			if not calculated_biome_cells.has(biome_name):
+				calculated_biome_cells[biome_name] = []
+			calculated_biome_cells[biome_name].append(pos)
 
-	return biome_cells
+	return calculated_biome_cells
 
 # Function to paint underwater beach cliff tiles; 3 total TileMapLayers to create a concave divot
-func paint_underwater_tiles(biome_cells: Dictionary) -> void:
+func paint_underwater_tiles() -> void:
 	var ocean_cells: Array = biome_cells.get("Ocean")
 	var underwater1Layer = underwaterLayers[0]
 	var underwater2Layer = underwaterLayers[1]
@@ -280,7 +279,7 @@ func paint_underwater_tiles(biome_cells: Dictionary) -> void:
 	underwater1Layer.set_cells_terrain_connect(layer1_cells, 0, 0, false)
 
 # Function to paint "real" ocean tiles on oceanLayer
-func paint_ocean_tiles(biome_cells: Dictionary) -> void:
+func paint_ocean_tiles() -> void:
 	var ocean_cells: Array = biome_cells.get("Ocean")
 
 	# No autotiling
@@ -288,7 +287,7 @@ func paint_ocean_tiles(biome_cells: Dictionary) -> void:
 		oceanLayer.set_cell(pos, 0, Vector2i(0, 0))
 
 # Function to paint the terrain of land biomes on groundLayer
-func paint_land_tiles(biome_cells: Dictionary) -> void:
+func paint_land_tiles() -> void:
 	# Paint "ghost" ocean tiles on groundLayer to properly autotile the beach/ocean transition
 	var ocean_cells: Array = biome_cells.get("Ocean")
 	var ocean_terrain = BIOME_TERRAINS.get("Ocean")
@@ -319,32 +318,31 @@ func paint_land_tiles(biome_cells: Dictionary) -> void:
 		groundLayer.erase_cell(pos)
 
 # Function to generate and paint the elevation layers
-func paint_elevation_tiles(biome_cells: Dictionary) -> void:
-	generate_elevation_map(biome_cells)
-	paint_elevation_layers(biome_cells)
+func paint_elevation_tiles() -> void:
+	generate_elevation_map()
+	paint_elevation_layers()
 
 func set_tiles() -> void:
-	var biome_cells = compute_biome_cells()
+	biome_cells = compute_biome_cells()
 
-	paint_underwater_tiles(biome_cells)
-	paint_ocean_tiles(biome_cells)
-	paint_land_tiles(biome_cells)
-	paint_elevation_tiles(biome_cells)
+	paint_underwater_tiles()
+	paint_ocean_tiles()
+	paint_land_tiles()
+	paint_elevation_tiles()
 
-func set_seeds() -> void:
-	if world_seed == 0:
-		randomize()
-		world_seed = randi()
-
-	# Ensure consistent tile variant selection based on world_seed
-	randomNumberGenerator.seed = world_seed
+func set_seed() -> void:
+	randomize()
+	world_seed = randi()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	set_seeds()
+	set_seed()
 
 	get_maps()
 	
 	set_tiles()
+	
+	# Register collisions before calling tree placement
+	await get_tree().create_timer(1.0).timeout
 
-	# treeHandler.placeTrees()
+	TreeHandlerScript.place_trees(self, biome_cells)
