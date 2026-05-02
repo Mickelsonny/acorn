@@ -88,12 +88,21 @@ static func detect_collision_in_radius(main_scene: Node2D, radius: int, pos: Vec
 	# Check if there are any objects in the results
 	return results.size() > 0
 
+static func get_tree_count(cells: Array) -> int:
+	# Base the number of trees on the number of cells in the biome
+	var rolls: int = 3
+	var sum: float = 0
+	for i in rolls:
+		sum += randi() % int(cells.size() / 10.0)
+		
+	return int(sum / rolls) + 1
+
 static func place_trees(main_scene: Node2D, biome_cells: Dictionary) -> void:
 	for biome_name in ["Grass", "Tundra", "Mesa", "Beach"]:
 		var cells: Array = biome_cells.get(biome_name)
 
 		# Base the number of trees on the number of cells in the biome
-		var tree_count: int = (randi() % int(cells.size() / 15.0)) + 1
+		var tree_count: int = get_tree_count(cells)
 		
 		for i in range(tree_count):
 			var cell: Vector2i = cells[randi() % cells.size()]

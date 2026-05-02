@@ -37,9 +37,9 @@ var moisture_octaves: int = 3
 var altitude_octaves: int = 3
 
 # Elevation generation
-var elevation_base_period: float = 70.0
-var elevation_detail_period: float = 25.0
-var elevation_base_octaves: int = 8
+var elevation_base_period: float = 50.0
+var elevation_detail_period: float = 20.0
+var elevation_base_octaves: int = 10
 var elevation_detail_octaves: int = 10
 
 var temperature = {}
@@ -49,12 +49,24 @@ var biome = {}
 var elevation = {}
 
 var biome_cells = {}
-const BIOME_TERRAINS := {
+const BIOME_TERRAINS := { # Terrain IDs
 	"Grass": 0,
 	"Tundra": 1,
 	"Mesa": 2,
 	"Beach": 3,
 	"Ocean": 4,
+}
+const BIOME_MAX_ELEVATION := { # Grass = Hilly, Tundra = Mountainous, Mesa = Rocky, Beach = Flat
+	"Grass": 3,
+	"Tundra": 5,
+	"Mesa": 4,
+	"Beach": 2,
+}
+const BIOME_INSET_PER_LAYER := {
+	"Grass": 3,
+	"Tundra": 1,
+	"Mesa": 2,
+	"Beach": 1, # >^•⩊•^<
 }
 
 func generate_map(period, octave, seed_offset: int = 0) -> Dictionary:
@@ -108,8 +120,8 @@ func is_inside_map(pos: Vector2i) -> bool:
 			return true
 	return false
 
-# Helper function to check if a tile is at least _padding_ tiles away from any biome boundary; 3 tiles by default
-func is_inside_biome_padding(pos: Vector2i, biome_name: String, padding: int = 3) -> bool:
+# Helper function to check if a tile is at least _padding_ tiles away from any biome boundary
+func is_inside_biome_padding(pos: Vector2i, biome_name: String, padding: int) -> bool:
 	if padding <= 0:
 		return true
 
@@ -127,8 +139,8 @@ func is_inside_biome_padding(pos: Vector2i, biome_name: String, padding: int = 3
 
 	return true
 
-# Helper function to check if a tile is at least _padding_ tiles away from the edge of a painted layer; 2 tiles by default
-func is_inside_layer_padding(pos: Vector2i, layer_lookup: Dictionary, padding: int = 2) -> bool:
+# Helper function to check if a tile is at least _padding_ tiles away from the edge of a painted layer
+func is_inside_layer_padding(pos: Vector2i, layer_lookup: Dictionary, padding: int) -> bool:
 	if padding <= 0:
 		return true
 
@@ -193,15 +205,18 @@ func generate_elevation_map() -> void:
 	for biome_name in ["Grass", "Tundra", "Mesa", "Beach"]:
 		var cells: Array = biome_cells.get(biome_name)
 		for pos in cells:
-			# Padding of THREE tiles to allow for the groundLayer's biome transitions to be shown
-			if not is_inside_biome_padding(pos, biome_name, 3):
+			# Padding of 1 tile to allow for the groundLayer's biome transitions to be shown
+			if not is_inside_biome_padding(pos, biome_name, 1):
 				continue
 
 			var base_value: float = base_noise.get(pos)
 			var detail_value: float = detail_noise.get(pos)
 			var mixed_value = clamp(base_value * 0.55 + detail_value - 0.45, 0.0, 1.0)
 			var calculated_level = int(round(lerpf(1.0, 5.0, mixed_value)))
-			elevation[pos] = clampi(calculated_level, 1, 5)
+
+			# Cap the elevation level depending on the biome
+			var max_level = BIOME_MAX_ELEVATION.get(biome_name)
+			elevation[pos] = clampi(calculated_level, 1, max_level)
 
 # Paint elevation layers based on the generated elevation map
 func paint_elevation_layers() -> void:
@@ -223,8 +238,8 @@ func paint_elevation_layers() -> void:
 				if elevation.get(pos, 0) < level:
 					continue
 
-				# Each higher layer is inset from the layer below by TWO tiles
-				if level > 1 and not is_inside_layer_padding(pos, previous_layer_lookup, 2):
+				# Each higher layer is inset from the layer below
+				if level > 1 and not is_inside_layer_padding(pos, previous_layer_lookup, BIOME_INSET_PER_LAYER[biome_name]):
 					continue
 
 				level_cells.append(pos)
