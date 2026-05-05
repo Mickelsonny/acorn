@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://h18qiw2gl8d4"]
 
 [ext_resource type="Script" uid="uid://cjky68r1jowd5" path="res://tree/scripts/regular_tree.gd" id="1_0uah1"]
-[ext_resource type="Texture2D" uid="uid://c0g75p8lnm4im" path="res://assets/objects/mesa/Trees_Birch_Brown_Small_Shake_16x16.png" id="1_kqdce"]
+[ext_resource type="Texture2D" uid="uid://c0g75p8lnm4im" path="res://assets/objects/grass/Trees_Birch_Brown_Small_Shake_16x16.png" id="1_kqdce"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kqdce"]
 atlas = ExtResource("1_kqdce")

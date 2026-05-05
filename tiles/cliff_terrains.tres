@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dfefig5qpoq4b" path="res://assets/tilesets/cliffs/beach_cliffs_tileset.png" id="1_ekifp"]
 [ext_resource type="Texture2D" uid="uid://br7tckjpondfo" path="res://assets/tilesets/cliffs/grass_cliffs_tileset.png" id="2_4wywb"]
-[ext_resource type="Texture2D" uid="uid://5rie11cd8kvp" path="res://assets/tilesets/cliffs/mesa_cliffs_tileset.png" id="3_ynrdq"]
+[ext_resource type="Texture2D" uid="uid://7pwacwwfvjrb" path="res://assets/tilesets/cliffs/mesa_cliffs_tileset.png" id="3_ynrdq"]
 [ext_resource type="Texture2D" uid="uid://k64hf3ijl82v" path="res://assets/tilesets/cliffs/tundra_cliffs_tileset.png" id="4_xt4ap"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jekf4"]

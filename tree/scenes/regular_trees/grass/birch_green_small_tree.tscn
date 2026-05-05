@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://dkocsun6btxv0"]
 
-[ext_resource type="Texture2D" uid="uid://cy1p4oll2g81d" path="res://assets/objects/mesa/Trees_Birch_Green_Small_Shake_16x16.png" id="1_jjktr"]
+[ext_resource type="Texture2D" uid="uid://cy1p4oll2g81d" path="res://assets/objects/grass/Trees_Birch_Green_Small_Shake_16x16.png" id="1_jjktr"]
 [ext_resource type="Script" uid="uid://cjky68r1jowd5" path="res://tree/scripts/regular_tree.gd" id="2_g01k3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g01k3"]

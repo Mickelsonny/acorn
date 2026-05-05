@@ -5,12 +5,12 @@ static var TREE_METADATA := {
 	"Grass": {
 		"fruit_trees": ["apple", "lemon", "orange", "peach"],
 		"regular_trees": {
-			"birch_brown": ["big", "huge", "medium"],
-			"birch_green": ["big", "huge", "medium"],
-			"birch_yellow": ["big", "huge", "medium"],
-			"oak_blue_green": ["big", "huge", "medium"],
-			"oak_brown": ["big", "huge", "medium"],
-			"oak_green": ["big", "huge", "medium"],
+			"birch_brown": ["big", "huge", "medium", "small"],
+			"birch_green": ["big", "huge", "medium", "small"],
+			"birch_yellow": ["big", "huge", "medium", "small"],
+			"oak_blue_green": ["big", "huge", "medium", "small"],
+			"oak_brown": ["big", "huge", "medium", "small"],
+			"oak_green": ["big", "huge", "medium", "small"],
 		}
 	},
 	"Tundra": {
@@ -19,16 +19,6 @@ static var TREE_METADATA := {
 			"pine_blue": ["small", "big", "huge", "medium"],
 			"pine_green": ["small", "big", "huge", "medium"],
 			"pine_dark_green": ["small", "big", "huge", "medium"],
-		}
-	},
-	"Mesa": {
-		"regular_trees": {
-			"birch_brown": ["small"],
-			"birch_green": ["small"],
-			"birch_yellow": ["small"],
-			"oak_blue_green": ["small"],
-			"oak_brown": ["small"],
-			"oak_green": ["small"],
 		}
 	},
 	"Beach": {
@@ -98,7 +88,7 @@ static func get_tree_count(cells: Array) -> int:
 	return int(sum / rolls) + 1
 
 static func place_trees(main_scene: Node2D, biome_cells: Dictionary) -> void:
-	for biome_name in ["Grass", "Tundra", "Mesa", "Beach"]:
+	for biome_name in ["Grass", "Tundra", "Beach"]:
 		var cells: Array = biome_cells.get(biome_name)
 
 		# Base the number of trees on the number of cells in the biome
