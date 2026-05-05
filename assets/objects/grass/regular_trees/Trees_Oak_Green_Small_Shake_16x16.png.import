@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b757orlthcidc"
-path="res://.godot/imported/Trees_Oak_Blue_Green_Small_Shake_16x16.png-a19d07aa93a8823cf0b886188edadde6.ctex"
+uid="uid://bgtjq0dij1v22"
+path="res://.godot/imported/Trees_Oak_Green_Small_Shake_16x16.png-8f87278d01493998ecd5ec26265c144a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/objects/grass/Trees_Oak_Blue_Green_Small_Shake_16x16.png"
-dest_files=["res://.godot/imported/Trees_Oak_Blue_Green_Small_Shake_16x16.png-a19d07aa93a8823cf0b886188edadde6.ctex"]
+source_file="res://assets/objects/grass/regular_trees/Trees_Oak_Green_Small_Shake_16x16.png"
+dest_files=["res://.godot/imported/Trees_Oak_Green_Small_Shake_16x16.png-8f87278d01493998ecd5ec26265c144a.ctex"]
 
 [params]
 

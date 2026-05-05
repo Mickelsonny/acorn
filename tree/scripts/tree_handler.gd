@@ -5,12 +5,12 @@ static var TREE_METADATA := {
 	"Grass": {
 		"fruit_trees": ["apple", "lemon", "orange", "peach"],
 		"regular_trees": {
-			"birch_brown": ["big", "huge", "medium", "small"],
-			"birch_green": ["big", "huge", "medium", "small"],
-			"birch_yellow": ["big", "huge", "medium", "small"],
-			"oak_blue_green": ["big", "huge", "medium", "small"],
-			"oak_brown": ["big", "huge", "medium", "small"],
-			"oak_green": ["big", "huge", "medium", "small"],
+			"birch_brown": ["small", "big", "huge", "medium"],
+			"birch_green": ["small", "big", "huge", "medium"],
+			"birch_yellow": ["small", "big", "huge", "medium"],
+			"oak_blue_green": ["small", "big", "huge", "medium"],
+			"oak_brown": ["small", "big", "huge", "medium"],
+			"oak_green": ["small", "big", "huge", "medium"],
 		}
 	},
 	"Tundra": {
