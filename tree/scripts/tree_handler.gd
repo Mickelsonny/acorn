@@ -5,20 +5,20 @@ static var TREE_METADATA := {
 	"Grass": {
 		"fruit_trees": ["apple", "lemon", "orange", "peach"],
 		"regular_trees": {
-			"birch_brown": ["small", "big", "huge", "medium"],
-			"birch_green": ["small", "big", "huge", "medium"],
-			"birch_yellow": ["small", "big", "huge", "medium"],
-			"oak_blue_green": ["small", "big", "huge", "medium"],
-			"oak_brown": ["small", "big", "huge", "medium"],
-			"oak_green": ["small", "big", "huge", "medium"],
+			"birch_brown": ["small", "medium", "big", "huge"],
+			"birch_green": ["small", "medium", "big", "huge"],
+			"birch_yellow": ["small", "medium", "big", "huge"],
+			"oak_blue_green": ["small", "medium", "big", "huge"],
+			"oak_brown": ["small", "medium", "big", "huge"],
+			"oak_green": ["small", "medium", "big", "huge"],
 		}
 	},
 	"Tundra": {
 		"regular_trees": {
-			"pine_blue_green": ["small", "big", "huge", "medium"],
-			"pine_blue": ["small", "big", "huge", "medium"],
-			"pine_green": ["small", "big", "huge", "medium"],
-			"pine_dark_green": ["small", "big", "huge", "medium"],
+			"pine_blue_green": ["small", "medium", "big", "huge"],
+			"pine_blue": ["small", "medium", "big", "huge"],
+			"pine_green": ["small", "medium", "big", "huge"],
+			"pine_dark_green": ["small", "medium", "big", "huge"],
 		}
 	},
 	"Beach": {
