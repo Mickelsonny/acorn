@@ -1,6 +1,7 @@
 extends Node2D
 
-const TreeHandlerScript = preload("res://tree/scripts/tree_handler.gd")
+const TreeHandlerScript = preload("res://decor/scripts/tree_handler.gd")
+const DetailHandlerScript = preload("res://decor/scripts/detail_handler.gd")
 
 # TileMapLayer nodes
 @onready var underwaterLayers: Array[TileMapLayer] = [
@@ -357,7 +358,9 @@ func _ready() -> void:
 	
 	set_tiles()
 	
-	# Register collisions before calling tree placement
+	# Register collisions before calling detail/tree placement
 	await get_tree().create_timer(1.0).timeout
+	
+	DetailHandlerScript.place_details(self, biome_cells, decorLayer, "Grass", 7777)
 
 	TreeHandlerScript.place_trees(self, biome_cells)

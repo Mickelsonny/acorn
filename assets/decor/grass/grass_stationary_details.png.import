@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5f23uk7i600p"
-path="res://.godot/imported/moving_details.png-cb90bac855b99954ff006f235b295a34.ctex"
+uid="uid://cvn11782sqv4y"
+path="res://.godot/imported/grass_stationary_details.png-6a13507c231093d89c315f49689b72bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/decor/grass/moving_details.png"
-dest_files=["res://.godot/imported/moving_details.png-cb90bac855b99954ff006f235b295a34.ctex"]
+source_file="res://assets/decor/grass/grass_stationary_details.png"
+dest_files=["res://.godot/imported/grass_stationary_details.png-6a13507c231093d89c315f49689b72bb.ctex"]
 
 [params]
 

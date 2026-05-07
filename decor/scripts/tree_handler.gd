@@ -1,9 +1,9 @@
 class_name TreeHandler
-extends RefCounted
+extends PlaceHandler
 
 const TREE_SHADOW_SPRITE = preload("res://assets/objects/tree_shadow.png")
 
-static var TREE_METADATA := {
+const TREE_METADATA := {
 	"Grass": {
 		"fruit_trees": ["apple", "lemon", "orange", "peach"],
 		"regular_trees": {
@@ -39,14 +39,14 @@ static func _create_tree_dictionary() -> Dictionary:
 		# Load fruit trees (treat fruit trees as medium size)
 		if "fruit_trees" in biome_data:
 			for tree_name: String in biome_data["fruit_trees"]:
-				var path = "res://tree/scenes/fruit_trees/%s/%s_tree.tscn" % [biome.to_lower(), tree_name]
+				var path = "res://decor/scenes/fruit_trees/%s/%s_tree.tscn" % [biome.to_lower(), tree_name]
 				scenes.append({"scene": load(path), "size": "medium"})
 		
 		# Load regular trees
 		if "regular_trees" in biome_data:
 			for tree_type: String in biome_data["regular_trees"]:
 				for size: String in biome_data["regular_trees"][tree_type]:
-					var path = "res://tree/scenes/regular_trees/%s/%s_%s_tree.tscn" % [biome.to_lower(), tree_type, size]
+					var path = "res://decor/scenes/regular_trees/%s/%s_%s_tree.tscn" % [biome.to_lower(), tree_type, size]
 					scenes.append({"scene": load(path), "size": size})
 		
 		final_dict[biome] = scenes
@@ -61,29 +61,9 @@ static func get_random_tree(biome_name: String) -> Dictionary:
 			return trees[randi() % trees.size()]
 	return {}
 
-# https://joeridamme.hashnode.dev/godot-4-detect-body-collision-before-adding-node-to-scene-part-2
-static func detect_collision_in_radius(main_scene: Node2D, radius: int, pos: Vector2) -> bool:
-	# Get the 2D physics space state
-	var space_state = main_scene.get_world_2d().direct_space_state
-	
-	# Create a CircleShape2D and set its radius
-	var shape = CircleShape2D.new()
-	shape.radius = radius
-	
-	# Create PhysicsShapeQueryParameters2D and set its shape and transform
-	var shape_query_params = PhysicsShapeQueryParameters2D.new()
-	shape_query_params.shape = shape
-	shape_query_params.transform.origin = pos
-	
-	# Perform a shape intersection query in the physics space
-	var results = space_state.intersect_shape(shape_query_params)
-	
-	# Check if there are any objects in the results
-	return results.size() > 0
-
 static func get_tree_count(cells: Array) -> int:
 	# Base the number of trees on the number of cells in the biome
-	var rolls: int = 3
+	var rolls: int = 5
 	var sum: float = 0
 	for i in rolls:
 		sum += randi() % int(cells.size() / 10.0)
@@ -114,20 +94,20 @@ static func place_shadows(tree_node: Node2D, scale: float) -> void:
 static func place_trees(main_scene: Node2D, biome_cells: Dictionary) -> void:
 	for biome_name in ["Grass", "Tundra", "Beach"]:
 		var cells: Array = biome_cells.get(biome_name)
-
-		# Base the number of trees on the number of cells in the biome
+		
 		var tree_count: int = get_tree_count(cells)
 		
 		for i in range(tree_count):
 			var cell: Vector2i = cells[randi() % cells.size()]
 			var tree_entry: Dictionary = get_random_tree(biome_name)
 			
-			# Avoid collisions with other trees, elevation layer cliffs, etc.
+			# Avoid collisions with other trees and elevation layer edges
 			var check_position: Vector2 = Vector2(cell.x * 16, cell.y * 16)
-			var collision_detected: bool = detect_collision_in_radius(main_scene, 15, check_position) # 15 px is the largest Area2D radius
-
+			var collision_detected: bool = detect_collision_in_radius(main_scene, 15, check_position, ["tree", "elevation"]) # 15 px is the largest Area2D radius
+			
 			if !collision_detected and tree_entry.size() > 0:
 				var tree_node: Node2D = tree_entry["scene"].instantiate()
 				tree_node.position = check_position
+				tree_node.add_to_group("tree")
 				main_scene.add_child(tree_node)
 				place_shadows(tree_node, get_tree_size_scale(tree_entry["size"]))

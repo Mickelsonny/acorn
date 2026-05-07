@@ -28,18 +28,18 @@ tile_set = ExtResource("2_ovnor")
 z_index = -10
 tile_set = ExtResource("2_k5wtf")
 
-[node name="GroundLayer" parent="." instance=ExtResource("5_omogb")]
+[node name="GroundLayer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 tile_set = ExtResource("2_41wxt")
 
-[node name="Elevation1Layer" parent="." instance=ExtResource("5_omogb")]
+[node name="Elevation1Layer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 
-[node name="Elevation2Layer" parent="." instance=ExtResource("5_omogb")]
+[node name="Elevation2Layer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 
-[node name="Elevation3Layer" parent="." instance=ExtResource("5_omogb")]
+[node name="Elevation3Layer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 
-[node name="Elevation4Layer" parent="." instance=ExtResource("5_omogb")]
+[node name="Elevation4Layer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 
-[node name="Elevation5Layer" parent="." instance=ExtResource("5_omogb")]
+[node name="Elevation5Layer" parent="." groups=["elevation"] instance=ExtResource("5_omogb")]
 
 [node name="DecorLayer" type="TileMapLayer" parent="."]
 tile_set = ExtResource("6_omogb")
